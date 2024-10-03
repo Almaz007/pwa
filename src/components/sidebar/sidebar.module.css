@@ -1,0 +1,84 @@
+.sidebar {
+    position: fixed;
+}
+.menu {
+    position: fixed;
+    z-index: 1000;
+    width: 88px;
+    height: 100%;
+    left: 0;
+    right: 0;
+    background-color: black;
+    transition: 0.3s all;
+}
+
+.visible .menu {
+    width: 260px;
+}
+.toogle {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: calc(100%);
+    transform: translateX(-50%);
+
+    padding: 5px 10px;
+    border-radius: 50%;
+    line-height: 1.2;
+    background-color: #fff;
+    text-align: center;
+}
+.overlay {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s all;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.visible .overlay {
+    opacity: 1;
+    visibility: visible;
+}
+.nav {
+    padding: 20px 10px;
+}
+.link {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    transition: 0.3s all;
+    color: #fff;
+    font-weight: 500;
+}
+.nav__column li {
+    margin-bottom: 10px;
+}
+.nav__column li:last-child {
+    margin-bottom: 0px;
+}
+.link.active {
+    color: var(--primary-color);
+}
+
+.icon {
+    min-width: 60px;
+    height: 50px;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.text {
+    transition: 0.3s all;
+    opacity: 0;
+    visibility: hidden;
+}
+.visible .text {
+    opacity: 1;
+    visibility: visible;
+}
