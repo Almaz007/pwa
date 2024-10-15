@@ -1,10 +1,13 @@
 .layout {
-    display: flex;
-    flex-direction: column;
-    padding-left: 88px;
-    height: 100svh;
+	display: flex;
+	flex-direction: column;
+	padding-left: 98px;
+	height: 100svh;
 }
 .main {
-    padding: 20px;
-    flex-grow: 1;
+	padding: 20px 20px 20px 25px;
+	flex-grow: 1;
 }
+/* .container {
+	height: 100%;
+} */

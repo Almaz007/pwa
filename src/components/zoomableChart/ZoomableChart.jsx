@@ -1,89 +1,74 @@
-import { memo, useMemo, useState, useRef, useEffect, forwardRef } from "react";
-import { Line } from "react-chartjs-2";
-import styles from "./zoomableChart.module.css";
-// Регистрируем плагин для масштабирования
+import { memo, useMemo, useState, useRef } from 'react';
+import { Line } from 'react-chartjs-2';
+import styles from './zoomableChart.module.css';
 
 const ZoomableChart = memo(
-    ({ data, options, cursorPosition, setCursorPosition, setZoomState }) => {
-        const { xyData } = data;
-        const [range, setRange] = useState([0, 100]);
-        const chartRef = useRef(null);
+	({
+		data,
+		range,
+		options,
+		cursorPosition,
+		setCursorPosition,
+		setZoomState,
+		zoomState
+	}) => {
+		const { xyData } = data;
 
-        const chartData = useMemo(() => {
-            const { xData, yData } = data.xyData;
-            return {
-                labels: xData.slice(range[0], range[1]), // Метки для оси X
-                datasets: [
-                    {
-                        label: data.name,
-                        data: yData.slice(range[0], range[1]), // Данные для графика
-                        borderColor: "#8884d8",
-                        borderWidth: 1,
-                        pointRadius: 3, // Размер точек на графике
-                        hoverRadius: 6, // Увеличение точки при наведении
-                        pointHoverBackgroundColor: "blue", // Цвет точки при наведении
-                        fill: "#8884d8",
-                    },
-                ],
-            };
-        }, [data, range]);
+		const chartRef = useRef(null);
 
-        const pointData = useMemo(() => {
-            const time = chartData.labels[cursorPosition];
-            const value = chartData.datasets[0].data[cursorPosition];
-            const name = chartData.datasets[0].label;
-            return { name, time, value };
-        }, [cursorPosition]);
+		const chartData = useMemo(() => {
+			const { xData, yData } = xyData;
+			return {
+				labels: xData.slice(range[0], range[1]),
+				datasets: [
+					{
+						label: data.name,
+						data: yData.slice(range[0], range[1]),
+						borderColor: '#8884d8',
+						borderWidth: 1,
+						pointRadius: 3,
+						hoverRadius: 6,
+						pointHoverBackgroundColor: 'blue',
+						fill: '#8884d8'
+					}
+				]
+			};
+		}, [data, range]);
 
-        const handleZoomIn = () => {
-            if (range[1] - range[0] > 100) {
-                setRange([range[0], range[1] - 100]);
-            }
-        };
+		const pointData = useMemo(() => {
+			const time = chartData.labels[cursorPosition];
+			const value = chartData.datasets[0].data[cursorPosition];
+			const name = chartData.datasets[0].label;
+			return { name, time, value };
+		}, [cursorPosition]);
 
-        const handleZoomOut = () => {
-            console.log("out");
-            if (range[1] + 100 <= xyData.xData.length) {
-                setRange([range[0], range[1] + 100]);
-            }
-        };
+		const handleMouseMove = event => {
+			const chart = chartRef.current;
+			if (!chart) return;
+			if (
+				zoomState.xMin !== chart.scales.x.min &&
+				zoomState.xMax !== chart.scales.x.max
+			) {
+				setZoomState({
+					xMin: chart.scales.x.min,
+					xMax: chart.scales.x.max
+				});
+			}
 
-        const handleMoveLeft = () => {
-            if (range[0] > 0) {
-                console.log("call");
+			const { chartArea, scales } = chart;
+			const xPosition = event.nativeEvent.offsetX;
 
-                setRange([range[0] - 100, range[1] - 100]);
-            }
-        };
+			if (xPosition >= chartArea.left && xPosition <= chartArea.right) {
+				const xValue = scales.x.getValueForPixel(xPosition);
 
-        const handleMoveRight = () => {
-            if (range[1] <= xyData.xData.length) {
-                setRange([range[0] + 100, range[1] + 100]);
-            }
-        };
-
-        // Обработчик движения мыши
-        const handleMouseMove = (event) => {
-            const chart = chartRef.current;
-            if (!chart) return;
-
-            // setZoomState({
-            //     xMin: chart.scales.x.min,
-            //     xMax: chart.scales.x.max,
-            // });
-            const { chartArea, scales } = chart;
-            const xPosition = event.nativeEvent.offsetX;
-
-            // Убедимся, что курсор находится внутри области графика
-            if (xPosition >= chartArea.left && xPosition <= chartArea.right) {
-                const xValue = scales.x.getValueForPixel(xPosition); // Получаем значение по оси X
-
-                setCursorPosition(xValue);
-            }
-        };
-        return (
-            <div className={styles["ZoomableChart"]}>
-                {/* <div className={styles["btn__rows"]}>
+				if (xValue !== cursorPosition) {
+					setCursorPosition(xValue);
+				}
+			}
+		};
+		return (
+			<div className={styles['ZoomableChart']}>
+				{/* <div className={styles["btn__rows"]}>
                 <Button className={styles["btn"]} handleClick={handleZoomIn}>
                     Увеличить
                 </Button>
@@ -97,30 +82,21 @@ const ZoomableChart = memo(
                     Вправо →
                 </Button>
             </div> */}
-                <div className={styles["chart__row"]}>
-                    <div className={styles["point__data"]}>
-                        <div className={styles["name"]}>{pointData.name}</div>
-                        <div className={styles["time"]}>
-                            time: {pointData.time}
-                        </div>
-                        <div className={styles["value"]}>
-                            value {pointData.value}
-                        </div>
-                    </div>
+				<div className={styles['chart__row']}>
+					<div className={styles['point__data']}>
+						<div className={styles['name']}>{pointData.name}</div>
+						<div className={styles['time']}>time: {pointData.time}</div>
+						<div className={styles['value']}>value {pointData.value}</div>
+					</div>
 
-                    <div
-                        onMouseMove={handleMouseMove}
-                        className={styles["line"]}
-                    >
-                        <Line
-                            ref={chartRef}
-                            data={chartData}
-                            options={options}
-                        />
-                    </div>
-                </div>
-            </div>
-        );
-    }
+					<div onMouseMove={handleMouseMove} className={styles['line']}>
+						<Line ref={chartRef} data={chartData} options={options} />
+					</div>
+				</div>
+			</div>
+		);
+	}
 );
+ZoomableChart.displayName = 'ZoomableChart';
+
 export default ZoomableChart;

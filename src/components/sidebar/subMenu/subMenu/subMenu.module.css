@@ -1,0 +1,36 @@
+.sub__menu {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: 300ms ease-in-out;
+}
+.sub__menu.show {
+	grid-template-rows: 1fr;
+}
+
+.sub__menu > div {
+	overflow: hidden;
+}
+.menu {
+	display: flex;
+	flex-direction: column;
+}
+.sub__link {
+	cursor: pointer;
+	padding: 10px 10px 10px 20px;
+	font-size: 16px;
+	font-weight: 500;
+	color: var(--text-color);
+	transition: var(--tran-03);
+	border-left: 2px solid var(--sidebar-color);
+}
+.sub__link:first-child {
+	margin-top: 10px;
+}
+.sub__link:hover {
+	border-left: 2px solid var(--primary-color);
+	color: var(--primary-color);
+}
+.sub__link.active {
+	border-left: 2px solid var(--primary-color);
+	color: var(--primary-color);
+}

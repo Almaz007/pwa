@@ -1,36 +1,51 @@
 .header {
-	padding: 15px 20px;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 2px 10px rgba(0, 0, 0, 0.05);
-	flex-shrink: 0;
 }
-
-.header__row {
+.header__block {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+
+	padding: 20px 30px;
+}
+.logo {
+	color: var(--primary-color);
 }
 .header__logo {
-	font-size: 20px;
-	font-weight: 700;
+	width: 200px;
 }
-.header__btns {
+.header__info {
 	display: flex;
-	gap: 20px;
+	column-gap: 30px;
+	align-items: center;
 }
-
-.nav__row {
+.headerLogo {
+	color: #0030e2;
+}
+.header__text {
 	display: flex;
-	gap: 20px;
+	column-gap: 28px;
+	align-items: center;
 }
-.link {
-	color: #000;
-	font-size: 16px;
+.text__block {
+	max-width: 154px;
+}
+.text__block .info__city {
 	font-weight: 500;
-	transition: 0.3s all;
+	line-height: normal;
 }
-.link.active {
-	color: var(--primary-color);
+.text__block .info__adress {
+	color: rgba(0, 0, 0, 0.5);
+	font-size: 12px;
+	font-weight: 400;
+	line-height: normal;
 }
-.link:hover {
-	color: var(--primary-color);
+.number__block {
+	font-weight: 500;
+	line-height: 1.4; /* 22.4px */
+	letter-spacing: 0.16px;
+}
+.header__action {
+	display: flex;
+	column-gap: 25px;
+	align-items: center;
 }
