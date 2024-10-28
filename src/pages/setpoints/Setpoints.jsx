@@ -1,37 +1,77 @@
-import { useState } from 'react';
+import {
+	ReactFlow,
+	ReactFlowProvider,
+	Background,
+	Controls,
+	useReactFlow
+} from '@xyflow/react';
+import { shallow } from 'zustand/shallow';
+import { useSetpoints } from '../../store/store';
 
-import DefinitionMfKz from './definitionMfKz/DefinitionMfKz';
-import DefinitionOzz from './definitionOzz/DefinitionOzz';
-import IceFormation from './iceFormation/IceFormation';
-import ChoiseBlock from '../../components/choiseBlock/ChoiseBlock';
-import TabeLayout from '../../components/tableLayout/TableLayout';
+import '@xyflow/react/dist/style.css';
+import FlowSidebar from '../../components/FlowSidebar/FlowSidebar';
+import { useCallback } from 'react';
 
-const Setpoints = () => {
-	const [index, setIndex] = useState('0');
+const selector = store => ({
+	nodes: store.nodes,
+	edges: store.edges,
+	onNodesChange: store.onNodesChange,
+	onEdgesChange: store.onEdgesChange,
+	addEdge: store.addEdge,
+	nodeType: store.nodeType,
+	createNode: store.createNode
+});
 
-	const elements = {
-		0: {
-			text: 'Определение МФ КЗ',
-			element: <DefinitionMfKz />
+function Flow() {
+	const store = useSetpoints(selector, shallow);
+	const { screenToFlowPosition } = useReactFlow();
+
+	const onDragOver = useCallback(event => {
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+	}, []);
+
+	const onDrop = useCallback(
+		event => {
+			event.preventDefault();
+			if (!store.nodeType) return;
+
+			const position = screenToFlowPosition({
+				x: event.clientX,
+				y: event.clientY
+			});
+
+			store.createNode(store.nodeType, position);
 		},
-		1: {
-			text: 'Опредление ОЗЗ',
-			element: <DefinitionOzz />
-		},
-		2: {
-			text: 'Голеледообразование',
-			element: <IceFormation />
-		}
-	};
+		[store.nodeType, screenToFlowPosition]
+	);
 
 	return (
-		<div>
-			<ChoiseBlock elements={elements} index={index} setIndex={setIndex} />
-			<TabeLayout text={elements[index].text}>
-				{elements[index].element}
-			</TabeLayout>
-		</div>
+		<>
+			<div style={{ width: '100%', height: '100%' }}>
+				<ReactFlow
+					nodes={store.nodes}
+					edges={store.edges}
+					onNodesChange={store.onNodesChange}
+					onEdgesChange={store.onEdgesChange}
+					onConnect={store.addEdge}
+					onDrop={onDrop}
+					onDragOver={onDragOver}
+					fitView
+				>
+					<Background />
+					<Controls />
+				</ReactFlow>
+			</div>
+			<FlowSidebar />
+		</>
 	);
-};
+}
 
-export default Setpoints;
+export default function Setpoints() {
+	return (
+		<ReactFlowProvider>
+			<Flow />
+		</ReactFlowProvider>
+	);
+}

@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import { api } from '../shared/api';
 import Papa from 'papaparse';
+import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 
 export const useBluetoothState = create((set, get) => ({
 	device: null,
@@ -224,7 +226,46 @@ export const useOscilogramms = create((set, get) => ({
 	signalsLoaded: false,
 
 	chartsData: [],
+	cursorIndex: 0,
 
+	// getOptions: () => {
+	// 	const { updateCursorIndex } = get();
+	// 	const options = {
+	// 		width: 1000,
+	// 		height: 200,
+	// 		scales: {
+	// 			x: { time: false }
+	// 		},
+	// 		axes: [
+	// 			{ show: false }, // Отключаем отображение оси X
+	// 			{ show: false },
+	// 			{}
+	// 		],
+	// 		series: [{}, { label: 'One', stroke: 'red' }],
+	// 		cursor: {
+	// 			drag: { x: true, y: false },
+	// 			focus: { prox: 30 },
+	// 			sync: { key: 'syncCursor' }
+	// 		},
+	// 		hooks: {
+	// 			setCursor: [
+	// 				u => {
+	// 					const { idx } = u.cursor;
+	// 					if (idx !== null) {
+	// 						updateCursorIndex(idx); // This will now use the memoized version
+	// 					}
+	// 				}
+	// 			]
+	// 		}
+	// 	};
+	// 	return options;
+	// },
+	updateCursorIndex: idx => {
+		const { cursorIndex } = get();
+		if (cursorIndex !== idx) {
+			set({ cursorIndex: idx });
+		}
+	},
 	handleCfgFile: event => {
 		const file = event.target.files[0];
 		const reader = new FileReader();
@@ -298,21 +339,21 @@ export const useOscilogramms = create((set, get) => ({
 		const { analogueChannelsCount } = cfgData.countsInfo;
 
 		const chartsData = [];
-		[...analogueChannels, ...discreteChannels].map((chanel, index) => {
+		[...analogueChannels].map((chanel, index) => {
 			let [number, id] = chanel.split(',');
 			index = index + 2;
-			const xyData = signals.map(signal => ({
-				x: signal[1],
-				y: signal[index]
-			}));
-			// const xyData = signals.reduce(
-			// 	(acc, signal) => {
-			// 		acc['xData'].push(signal[1]);
-			// 		acc['yData'].push(signal[index]);
-			// 		return acc;
-			// 	},
-			// 	{ xData: [], yData: [] }
-			// );
+			// const xyData = signals.map(signal => ({
+			// 	x: signal[1],
+			// 	y: signal[index]
+			// }));
+			const xyData = signals.reduce(
+				(acc, signal) => {
+					acc['xData'].push(signal[1]);
+					acc['yData'].push(signal[index]);
+					return acc;
+				},
+				{ xData: [], yData: [] }
+			);
 
 			const dataForChannel = {
 				name: id,
@@ -341,5 +382,77 @@ export const useOscilogramms = create((set, get) => ({
 		});
 
 		set({ chartsData: newChartsData });
+	}
+}));
+export const useZoomStore = create(set => ({
+	scaleX: { min: 0, max: 5499750 }, // Начальные значения
+	setScaleX: (min, max) => set({ scaleX: { min, max } })
+}));
+
+export const useSetpoints = createWithEqualityFn((set, get) => ({
+	nodes: [
+		{ id: 'output 1', position: { x: 0, y: 0 }, data: { label: 'label' } },
+		{ id: 'output 2', position: { x: 400, y: 0 }, data: { label: 'label' } }
+	],
+	edges: [],
+	nodeType: null,
+
+	setNodeType(type) {
+		set({ nodeType: type });
+	},
+
+	onNodesChange(changes) {
+		set({
+			nodes: applyNodeChanges(changes, get().nodes)
+		});
+	},
+
+	onEdgesChange(changes) {
+		set({
+			edges: applyEdgeChanges(changes, get().edges)
+		});
+	},
+
+	addEdge(data) {
+		const id = nanoid(6);
+		const edge = { id, ...data, animated: true };
+
+		set({ edges: [edge, ...get().edges] });
+	},
+	createNode(type, position) {
+		const id = uuidv4();
+
+		switch (type) {
+			case 'input': {
+				const node = {
+					id,
+					type,
+					position,
+					data: ''
+				};
+				set(state => ({ nodes: [...state.nodes, node] }));
+				break;
+			}
+			case 'logika': {
+				const node = {
+					id,
+					type,
+					position,
+					data: {}
+				};
+				set(state => ({ nodes: [...state.nodes, node] }));
+				break;
+			}
+			case 'output': {
+				const node = {
+					id,
+					type,
+					position,
+					data: {}
+				};
+				set(state => ({ nodes: [...state.nodes, node] }));
+				break;
+			}
+		}
 	}
 }));

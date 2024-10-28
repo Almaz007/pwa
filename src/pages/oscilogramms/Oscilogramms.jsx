@@ -2,37 +2,108 @@ import { useRef, useState, useMemo, useEffect } from 'react';
 import Button from '../../components/UI/button/Button';
 import styles from './oscilogramms.module.css';
 import { useOscilogramms } from '../../store/store';
-import ZoomableChart from '../../components/zoomableChart/ZoomableChart';
-import zoomPlugin from 'chartjs-plugin-zoom';
-import annotationPlugin from 'chartjs-plugin-annotation';
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	Title,
-	Tooltip,
-	Legend
-} from 'chart.js';
-import MultiSignalChart from '../MultiSignalChart/MultiSignalChart';
-import CanvasStockChart from '../../components/canvasChart/CanvasChart';
+import PlotChart from '../../components/PlotChart/PlotChart';
+import ChatInfo from '../../components/ChatInfo/ChatInfo';
+import CustomSelect from '../../components/UI/CustomSelect/CustomSelect';
 
+function wheelZoomPlugin(opts) {
+	let factor = opts.factor || 0.75;
+
+	let xMin, xMax, yMin, yMax, xRange, yRange;
+
+	function clamp(nRange, nMin, nMax, fRange, fMin, fMax) {
+		if (nRange > fRange) {
+			nMin = fMin;
+			nMax = fMax;
+		} else if (nMin < fMin) {
+			nMin = fMin;
+			nMax = fMin + nRange;
+		} else if (nMax > fMax) {
+			nMax = fMax;
+			nMin = fMax - nRange;
+		}
+		return [nMin, nMax];
+	}
+
+	return {
+		hooks: {
+			ready: u => {
+				xMin = u.scales.x.min;
+				xMax = u.scales.x.max;
+				yMin = u.scales.y.min;
+				yMax = u.scales.y.max;
+
+				xRange = xMax - xMin;
+				yRange = yMax - yMin;
+
+				let over = u.over;
+				let rect = over.getBoundingClientRect();
+
+				// Панирование колесом мыши
+				over.addEventListener('mousedown', e => {
+					if (e.button === 1) {
+						e.preventDefault();
+
+						let left0 = e.clientX;
+						let scXMin0 = u.scales.x.min;
+						let scXMax0 = u.scales.x.max;
+						let xUnitsPerPx = u.posToVal(1, 'x') - u.posToVal(0, 'x');
+
+						function onmove(e) {
+							e.preventDefault();
+							let left1 = e.clientX;
+							let dx = xUnitsPerPx * (left1 - left0);
+
+							u.setScale('x', {
+								min: scXMin0 - dx,
+								max: scXMax0 - dx
+							});
+						}
+
+						function onup() {
+							document.removeEventListener('mousemove', onmove);
+							document.removeEventListener('mouseup', onup);
+						}
+
+						document.addEventListener('mousemove', onmove);
+						document.addEventListener('mouseup', onup);
+					}
+				});
+
+				// Зуммирование колесом мыши
+				over.addEventListener('wheel', e => {
+					e.preventDefault();
+
+					let { left, top } = u.cursor;
+					let leftPct = left / rect.width;
+					let btmPct = 1 - top / rect.height;
+					let xVal = u.posToVal(left, 'x');
+					let yVal = u.posToVal(top, 'y');
+					let oxRange = u.scales.x.max - u.scales.x.min;
+					let oyRange = u.scales.y.max - u.scales.y.min;
+
+					let nxRange = e.deltaY < 0 ? oxRange * factor : oxRange / factor;
+					let nxMin = xVal - leftPct * nxRange;
+					let nxMax = nxMin + nxRange;
+					[nxMin, nxMax] = clamp(nxRange, nxMin, nxMax, xRange, xMin, xMax);
+
+					let nyRange = e.deltaY < 0 ? oyRange * factor : oyRange / factor;
+					let nyMin = yVal - btmPct * nyRange;
+					let nyMax = nyMin + nyRange;
+					[nyMin, nyMax] = clamp(nyRange, nyMin, nyMax, yRange, yMin, yMax);
+
+					u.batch(() => {
+						u.setScale('x', { min: nxMin, max: nxMax });
+						u.setScale('y', { min: nyMin, max: nyMax });
+					});
+				});
+			}
+		}
+	};
+}
 // Регистрируй компоненты
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	PointElement,
-	LineElement,
-	zoomPlugin,
-	annotationPlugin,
-	Title,
-	Tooltip,
-	Legend
-);
-
 const Oscilogramms = () => {
-	const [
+	const {
 		handleCfgFile,
 		handleDataFile,
 		cfgData,
@@ -41,21 +112,11 @@ const Oscilogramms = () => {
 		cfgLoaded,
 		generateChartsData,
 		chartsData
-	] = useOscilogramms(state => [
-		state.handleCfgFile,
-		state.handleDataFile,
-		state.cfgData,
-		state.sginalsData,
-		state.signalsLoaded,
-		state.cfgLoaded,
-		state.generateChartsData,
-		state.chartsData
-	]);
-	const [range, setRange] = useState([0, 1000]);
-	const [zoomState, setZoomState] = useState({ xMin: 0, xMax: 30 }); // Состояние для общего зума
+	} = useOscilogramms(state => state);
+
+	const [range, setRange] = useState([0, 22000]);
 
 	// Функция для синхронизации зуммирования
-	const [cursorPosition, setCursorPosition] = useState(0);
 
 	const cfgFileBtnRef = useRef(null);
 	const dataFileBtnRef = useRef(null);
@@ -67,100 +128,34 @@ const Oscilogramms = () => {
 		dataFileBtnRef.current.click();
 	};
 
-	const options = useMemo(
-		() => ({
-			scales: {
-				x: {
-					type: 'category', // Ось X как категории
-					min: zoomState.xMin, // Используем зум-состояние для масштаба
-					max: zoomState.xMax,
-					ticks: {
-						// autoSkip: true,
-						// maxTicksLimit: 20,
-						display: false
-					}
-				},
-				y: {
-					beginAtZero: true,
-					ticks: {
-						// autoSkip: true,
-						maxTicksLimit: 20
-						// display: false
-					}
-				}
-			},
-			plugins: {
-				legend: {
-					display: false
-				},
-				annotation: {
-					annotations:
-						cursorPosition !== null
-							? [
-									{
-										type: 'line',
-										mode: 'vertical',
-										scaleID: 'x',
-										value: cursorPosition,
-										borderColor: 'blue',
-										borderWidth: 2
-									}
-							  ]
-							: []
-				},
-				tooltip: {
-					enabled: true,
-					callbacks: {
-						label: function (context) {
-							const label = context.label;
-							const value = context.raw;
-							return `Point: ${label}, Value: ${value}`;
-						}
-					}
-				},
-				zoom: {
-					pan: {
-						enabled: true,
-						mode: 'x' // Панорамирование по оси X
-						// onPanComplete: ({ chart }) => {
-						//     console.log("pan");
-						//     const panRange = chart.scales.x;
-						//     // Обновляем состояние после панорамирования
-						//     setZoomState({
-						//         xMin: panRange.min,
-						//         xMax: panRange.max,
-						//     });
-						// },
-					},
-					zoom: {
-						wheel: {
-							enabled: true // Включить зум через колесо мыши
-						},
-						pinch: {
-							enabled: true // Включить зум через touch-жесты
-						},
-						mode: 'x',
-						onZoomComplete: ({ chart }) => {
-							const zoomRange = chart.scales.x;
-							console.log({
-								xMin: zoomRange.min,
-								xMax: zoomRange.max
-							});
-							// Синхронизация зуммирования со всеми графиками
-							setZoomState({
-								xMin: zoomRange.min,
-								xMax: zoomRange.max
-							});
-						}
-					}
-				}
-			},
-			responsive: true,
-			maintainAspectRatio: false
-		}),
-		[zoomState, cursorPosition]
-	);
-
+	// const options = {
+	// 	width: 1000,
+	// 	height: 200,
+	// 	scales: {
+	// 		x: { time: false }
+	// 	},
+	// 	axes: [
+	// 		{ show: false }, // Отключаем отображение оси X
+	// 		{ show: false },
+	// 		{}
+	// 	],
+	// 	series: [{}, { label: 'One', stroke: 'red' }],
+	// 	cursor: {
+	// 		drag: { x: true, y: false },
+	// 		focus: { prox: 30 },
+	// 		sync: { key: 'syncCursor' }
+	// 	}
+	// 	// hooks: {
+	// 	// 	setCursor: [
+	// 	// 		u => {
+	// 	// 			const { idx } = u.cursor;
+	// 	// 			if (idx !== null) {
+	// 	// 				updateCursorIndex(idx); // This will now use the memoized version
+	// 	// 			}
+	// 	// 		}
+	// 	// 	]
+	// 	// }
+	// };
 	const handleZoomIn = () => {
 		if (range[1] - range[0] > 30) {
 			setRange([range[0], range[1] - 30]);
@@ -230,7 +225,42 @@ const Oscilogramms = () => {
 				</div>
 			</div>
 			{!!chartsData.length && (
-				<CanvasStockChart data={chartsData[0]} range={range} />
+				<>
+					<div className={styles['btn__row']}>
+						<Button className={styles['btn']} handleClick={handleZoomIn}>
+							Увеличить
+						</Button>
+						<Button className={styles['btn']} handleClick={handleZoomOut}>
+							Уменьшить
+						</Button>
+						<Button className={styles['btn']} handleClick={handleMoveLeft}>
+							← Влево
+						</Button>
+						<Button className={styles['btn']} handleClick={handleMoveRight}>
+							Вправо →
+						</Button>
+					</div>
+					<CustomSelect channels={chartsData} />
+					<div className={styles['charts']}>
+						{chartsData
+							// .slice(0, 3)
+							.map(data =>
+								data.visible ? (
+									<div key={data.id} className={styles['row__chart']}>
+										<ChatInfo data={data} />
+										<PlotChart
+											key={data.id}
+											data={data}
+											// options={options}
+											range={range}
+										/>
+									</div>
+								) : (
+									''
+								)
+							)}
+					</div>
+				</>
 			)}
 		</div>
 	);
