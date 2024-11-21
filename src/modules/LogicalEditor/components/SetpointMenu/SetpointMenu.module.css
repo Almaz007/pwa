@@ -1,0 +1,65 @@
+.setpoint__menu {
+	display: inline-block;
+	position: relative;
+}
+.menu {
+	position: absolute;
+	z-index: 10;
+	left: 0px;
+	top: calc(100% + 10px);
+
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+
+	transform: translateY(-10px);
+	padding: 8px;
+	border-radius: 5px;
+	width: 250px;
+	height: 500px;
+	background-color: var(--background-color);
+	box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+	border: 1px solid rgba(34, 60, 80, 0.2);
+	transition: var(--tran-03);
+}
+.menu.visible {
+	transform: translateY(0px);
+	opacity: 1;
+	visibility: visible;
+	pointer-events: all;
+}
+.func_column {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	padding: 4px;
+}
+.func {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	cursor: pointer;
+}
+.func__btn {
+	font-size: 16px;
+	font-weight: 500;
+	transition: var(--tran-03);
+}
+.add__func {
+	display: flex;
+	gap: 5px;
+	align-items: center;
+	margin-bottom: 5px;
+}
+.add__btn {
+	font-size: 35px;
+	color: var(--primary-color);
+	transition: var(--tran-03);
+}
+.add__btn:hover {
+	color: var(--primary-hover-color);
+	transform: translateY(-2px);
+}
+.add__btn svg {
+	display: block;
+}

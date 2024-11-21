@@ -14,7 +14,6 @@
 
 	/* ===== Colors ===== */
 	--sidebar-color: #fff;
-	--primary-color: #0030e2;
 	--primary-hover-color: #3a5fe6;
 	--primary-color-light: #f6f5ff;
 	--toggle-color: #ddd;
@@ -30,3 +29,11 @@
 body {
 	font-family: 'Roboto', sans-serif;
 }
+
+/* .react-flow__node-groupNode {
+	background: rgba(153, 26, 152, 0.1);
+	border: 1px solid #fff;
+	box-shadow: 0px 0px 8px 0px rgba(255, 255, 255, 0.5);
+	resize: both;
+	width: auto;
+} */

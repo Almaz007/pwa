@@ -1,0 +1,38 @@
+.menu__btn {
+	display: block;
+	position: relative;
+	width: 30px;
+	height: 26px;
+	border: none;
+	background-color: transparent;
+	z-index: 2;
+}
+
+.menu__btn span {
+	position: absolute;
+	width: 30px;
+	height: 3px;
+	background-color: black;
+	left: 0;
+	transition: var(--tran-03);
+}
+
+.menu__btn span:nth-child(1) {
+	transform: translateY(-10px);
+}
+
+.menu__btn span:nth-child(3) {
+	transform: translateY(10px);
+}
+
+.menu__btn.visible span:nth-child(1) {
+	transform: translateY(0) rotate(45deg);
+}
+
+.menu__btn.visible span:nth-child(2) {
+	opacity: 0;
+}
+
+.menu__btn.visible span:nth-child(3) {
+	transform: translateY(0) rotate(-45deg);
+}

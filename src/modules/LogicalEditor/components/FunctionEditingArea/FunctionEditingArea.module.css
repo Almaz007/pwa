@@ -1,0 +1,15 @@
+.editing__area {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	position: relative;
+}
+.back__link {
+	flex-shrink: 0;
+	margin-left: 50px;
+}
+.flow {
+	flex-grow: 1;
+	height: 100%;
+	width: 100%;
+}

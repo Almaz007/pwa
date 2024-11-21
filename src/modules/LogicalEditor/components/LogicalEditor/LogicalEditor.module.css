@@ -1,0 +1,15 @@
+.logical__editor {
+	height: 100%;
+}
+.configuration {
+	flex-shrink: 0;
+}
+.flow {
+	flex-grow: 1;
+}
+
+.button__group {
+	display: flex;
+	column-gap: 10px;
+	color: #00000005;
+}

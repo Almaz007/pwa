@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AccidentLog from '../pages/accidentLog/AccidentLog';
 import DeviceInfo from '../pages/deviceInfo/DeviceInfo';
 import EventLog from '../pages/eventLog/EventLog';
@@ -11,6 +11,11 @@ import GeneralSettings from '../pages/settings/generalSettings/GeneralSettings';
 import CommunicationSettings from '../pages/settings/communicationSettings/CommunicationSettings';
 import Monitoring from '../pages/monitoring/Monitoring';
 import Setpoints from '../pages/setpoints/Setpoints';
+import {
+	FunctionEditingArea,
+	LogicalEditor,
+	LogicalEditorLayout
+} from '../modules/LogicalEditor';
 
 export const router = createBrowserRouter([
 	{
@@ -43,7 +48,25 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: 'setpoints',
-				element: <Setpoints />
+				element: <Setpoints />,
+				children: [
+					{
+						index: true,
+						element: <Navigate to={'logicalEditor'} />
+					},
+					{
+						path: 'logicalEditor',
+						element: <LogicalEditor />
+					},
+					{
+						path: 'functionEditingArea/:id',
+						element: <FunctionEditingArea />
+					}
+				]
+			},
+			{
+				path: 'functionEditingArea/:id',
+				element: <FunctionEditingArea />
 			},
 			{
 				path: 'settings',

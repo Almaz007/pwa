@@ -1,9 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { create } from 'zustand';
-import { createWithEqualityFn } from 'zustand/traditional';
-import { api } from '../shared/api';
 import Papa from 'papaparse';
-import { applyNodeChanges, applyEdgeChanges, addEdge } from '@xyflow/react';
 
 export const useBluetoothState = create((set, get) => ({
 	device: null,
@@ -387,72 +384,4 @@ export const useOscilogramms = create((set, get) => ({
 export const useZoomStore = create(set => ({
 	scaleX: { min: 0, max: 5499750 }, // Начальные значения
 	setScaleX: (min, max) => set({ scaleX: { min, max } })
-}));
-
-export const useSetpoints = createWithEqualityFn((set, get) => ({
-	nodes: [
-		{ id: 'output 1', position: { x: 0, y: 0 }, data: { label: 'label' } },
-		{ id: 'output 2', position: { x: 400, y: 0 }, data: { label: 'label' } }
-	],
-	edges: [],
-	nodeType: null,
-
-	setNodeType(type) {
-		set({ nodeType: type });
-	},
-
-	onNodesChange(changes) {
-		set({
-			nodes: applyNodeChanges(changes, get().nodes)
-		});
-	},
-
-	onEdgesChange(changes) {
-		set({
-			edges: applyEdgeChanges(changes, get().edges)
-		});
-	},
-
-	addEdge(data) {
-		const id = nanoid(6);
-		const edge = { id, ...data, animated: true };
-
-		set({ edges: [edge, ...get().edges] });
-	},
-	createNode(type, position) {
-		const id = uuidv4();
-
-		switch (type) {
-			case 'input': {
-				const node = {
-					id,
-					type,
-					position,
-					data: ''
-				};
-				set(state => ({ nodes: [...state.nodes, node] }));
-				break;
-			}
-			case 'logika': {
-				const node = {
-					id,
-					type,
-					position,
-					data: {}
-				};
-				set(state => ({ nodes: [...state.nodes, node] }));
-				break;
-			}
-			case 'output': {
-				const node = {
-					id,
-					type,
-					position,
-					data: {}
-				};
-				set(state => ({ nodes: [...state.nodes, node] }));
-				break;
-			}
-		}
-	}
 }));
