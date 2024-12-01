@@ -2,31 +2,24 @@ import {
 	ReactFlow,
 	Background,
 	Controls,
-	MarkerType,
 	getIncomers,
-	Panel
+	Panel,
+	ReactFlowProvider
 } from '@xyflow/react';
 
 import '@xyflow/react/dist/style.css';
 import styles from './LogicalEditor.module.css';
 import SelectedNodesToolbar from '../SelectedNodesToolbar/SelectedNodesToolbar.jsx';
 import useLogcalEditor from '../../hooks/useLogicalEditor.jsx';
-import ElementsPanel from '../ElementsPanel/ElementsPanel.jsx';
 import { useCopyPaste } from '../../hooks/useCopyPaste.js';
 import { Button } from '@mui/material';
+import {
+	defaultEdgeOptions,
+	nodeTypes,
+	proOptions
+} from '../../constants/constants.js';
 
-const defaultEdgeOptions = {
-	style: {
-		strokeWidth: 2
-	},
-	markerEnd: {
-		type: MarkerType.ArrowClosed
-	}
-};
-const proOptions = {
-	hideAttribution: true
-};
-function LogicalEditor() {
+function LogicalEditorContent() {
 	const snapGrid = [20, 20];
 	const {
 		nodes,
@@ -34,14 +27,13 @@ function LogicalEditor() {
 		onNodesChange,
 		onEdgesChange,
 		addEdge,
-		nodeTypes,
-		isValidConnection,
-		onDragOver,
-		onDrop,
-		onNodeDragStop,
-		onNodeDrag
-	} = useLogcalEditor();
 
+		// onDrop,
+		// onDragOver,
+		// onNodeDrag,
+		isValidConnection
+	} = useLogcalEditor();
+	console.log(nodes);
 	const convertData = () => {
 		let num = 0;
 		const newArr = {};
@@ -67,11 +59,11 @@ function LogicalEditor() {
 		);
 		console.log(res);
 	};
-
 	const { cut, copy, paste, bufferedNodes } = useCopyPaste();
 
 	const canCopy = nodes.some(({ selected }) => selected);
 	const canPaste = bufferedNodes.length > 0;
+
 	return (
 		<div className={styles['logical__editor']}>
 			<div className={styles['configuration']}></div>
@@ -81,12 +73,10 @@ function LogicalEditor() {
 				onNodesChange={onNodesChange}
 				onEdgesChange={onEdgesChange}
 				onConnect={addEdge}
-				onNodeDrag={onNodeDrag}
-				onNodeDragStop={onNodeDragStop}
-				onDrop={onDrop}
-				onDragOver={onDragOver}
+				// onDrop={onDrop}
+				// onDragOver={onDragOver}
 				nodeTypes={nodeTypes}
-				selectNodesOnDrag={false}
+				// onNodeDrag={onNodeDrag}
 				fitView
 				defaultEdgeOptions={defaultEdgeOptions}
 				proOptions={proOptions}
@@ -95,12 +85,7 @@ function LogicalEditor() {
 				snapGrid={snapGrid}
 			>
 				<Panel className={styles['button__group']} position='top-center'>
-					<Button
-						variant='contained'
-						onClick={() => cut()}
-						disabled={!canCopy}
-						className={styles['panel__btn']}
-					>
+					<Button variant='contained' onClick={() => cut()} disabled={!canCopy}>
 						cut
 					</Button>
 					<Button
@@ -123,13 +108,20 @@ function LogicalEditor() {
 						save
 					</Button>
 				</Panel>
+
 				<SelectedNodesToolbar />
 				<Background />
 				<Controls />
 			</ReactFlow>
-			<ElementsPanel />
 		</div>
 	);
 }
 
+const LogicalEditor = () => {
+	return (
+		<ReactFlowProvider>
+			<LogicalEditorContent />
+		</ReactFlowProvider>
+	);
+};
 export default LogicalEditor;

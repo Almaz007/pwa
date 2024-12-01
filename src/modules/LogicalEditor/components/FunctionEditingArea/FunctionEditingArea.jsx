@@ -1,74 +1,70 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import ElementsPanel from '../ElementsPanel/ElementsPanel';
-import styles from './FunctionEditingArea.module.css';
+import { Link, useParams } from 'react-router-dom';
 import { IoMdArrowBack } from 'react-icons/io';
-import { Background, Controls, MarkerType, ReactFlow } from '@xyflow/react';
-import SelectedNodesToolbar from '../SelectedNodesToolbar/SelectedNodesToolbar.jsx';
-import { useMemo } from 'react';
-import useLogcalEditor from '../../hooks/useLogicalEditor.jsx';
+import {
+	Background,
+	Controls,
+	ReactFlowProvider,
+	ReactFlow,
+	Panel
+} from '@xyflow/react';
 import { Button } from '@mui/material';
 import styled from '@emotion/styled';
-
+import SelectedNodesToolbar from '../SelectedNodesToolbar/SelectedNodesToolbar.jsx';
+import ElementsPanel from '../ElementsPanel/ElementsPanel';
+import styles from './FunctionEditingArea.module.css';
+import {
+	proOptions,
+	defaultEdgeOptions,
+	nodeTypes
+} from '../../constants/constants.js';
+import { useFunctionEditingArea } from '../../hooks/useFunctionEditingArea.js';
+import '@xyflow/react/dist/style.css';
 const StyledButton = styled(Button)({
 	fontSize: '18px',
 	textTransform: 'lowercase'
 });
-
-const FunctionEditingArea = ({ children }) => {
+function FunctionEditingAreaContent() {
+	const { id } = useParams();
 	const {
 		nodes,
-		edges,
 		onNodesChange,
+		edges,
 		onEdgesChange,
-		addEdge,
-		nodeTypes,
 		isValidConnection,
 		onDragOver,
 		onDrop,
 		onNodeDragStop,
-		onNodeDrag
-	} = useLogcalEditor();
+		onConnect,
+		saveChanges
+	} = useFunctionEditingArea(id);
 
-	const { id } = useParams();
-	const initialNodes = useMemo(() => {
-		return nodes.filter(node => node.id === id || node.parentId === id);
-	}, [nodes, id]);
-
-	const defaultEdgeOptions = {
-		style: {
-			strokeWidth: 2
-		},
-		markerEnd: {
-			type: MarkerType.ArrowClosed
-		}
-	};
-	const proOptions = {
-		hideAttribution: true
-	};
-	console.log(nodes);
-	console.log(initialNodes);
 	return (
 		<div className={styles['editing__area']}>
-			<Link to={'/setpoints/logicalEditor'} className={styles['back__link']}>
-				<StyledButton startIcon={<IoMdArrowBack />} variant='text'>
-					на главную
+			<div className={styles['configuration']}>
+				<Link to={'/setpoints/logicalEditor'} className={styles['back__link']}>
+					<StyledButton startIcon={<IoMdArrowBack />} variant='text'>
+						на главную
+					</StyledButton>
+				</Link>
+				<StyledButton variant='contained' onClick={() => saveChanges()}>
+					применить
 				</StyledButton>
-			</Link>
+			</div>
 			<div className={styles['flow']}>
 				<ReactFlow
-					nodes={initialNodes}
-					edges={edges}
+					nodes={nodes}
 					onNodesChange={onNodesChange}
+					edges={edges}
 					onEdgesChange={onEdgesChange}
-					onConnect={addEdge}
+					onConnect={onConnect}
 					nodeTypes={nodeTypes}
 					defaultEdgeOptions={defaultEdgeOptions}
 					proOptions={proOptions}
 					isValidConnection={isValidConnection}
+					fitView
 					onDragOver={onDragOver}
 					onDrop={onDrop}
 					onNodeDragStop={onNodeDragStop}
-					onNodeDrag={onNodeDrag}
 				>
 					<SelectedNodesToolbar />
 					<Background />
@@ -78,6 +74,13 @@ const FunctionEditingArea = ({ children }) => {
 			<ElementsPanel />
 		</div>
 	);
-};
+}
 
+const FunctionEditingArea = () => {
+	return (
+		<ReactFlowProvider>
+			<FunctionEditingAreaContent />
+		</ReactFlowProvider>
+	);
+};
 export default FunctionEditingArea;

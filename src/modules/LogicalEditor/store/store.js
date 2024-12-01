@@ -27,9 +27,7 @@ export const useLogicalEditor = createWithEqualityFn((set, get) => ({
 
 		set({ edges: [edge, ...get().edges] });
 	},
-	createNode(node) {
-		set(state => ({ nodes: [...state.nodes, node] }));
-	},
+
 	addNode(newNode) {
 		const { nodes } = get();
 		const sortedNodes = [...nodes, newNode].sort(sortNodes);
@@ -38,6 +36,11 @@ export const useLogicalEditor = createWithEqualityFn((set, get) => ({
 	setNodes(nodes) {
 		set({
 			nodes: [...nodes]
+		});
+	},
+	setEdges(edges) {
+		set({
+			edges: [...edges]
 		});
 	}
 }));

@@ -41,9 +41,12 @@ export const generateNode = (type, position, style) => {
 		case 'inputNode': {
 			const node = {
 				id,
-				type,
+				type: 'shape',
 				position,
+				width: 238,
+				height: 35, 
 				data: {
+					type: 'inputNode',
 					value: false
 				}
 			};

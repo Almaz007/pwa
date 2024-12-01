@@ -1,39 +1,72 @@
-import { useReactFlow, getOutgoers } from '@xyflow/react';
+import {
+	useNodesState,
+	useEdgesState,
+	getConnectedEdges,
+	getOutgoers,
+	useReactFlow,
+	addEdge
+} from '@xyflow/react';
+import { useMemo, useCallback, useState, useRef } from 'react';
 import { useLogicalEditor } from '../store/store';
-import { selector } from '../store/selectors';
-import { shallow } from 'zustand/shallow';
-import InputNode from '../components/InputNode/Inputnode';
-import OutputNode from '../components/OutputNode/OutputNode';
-import LogicAnd from '../components/LogicAnd/LogicAnd';
-import GroupNode from '../components/GroupNode/GroupNode';
-import { useCallback } from 'react';
-
 import {
 	generateNode,
 	getNodePositionInsideParent,
 	sortNodes
 } from '../helpers/helpers';
+import { shallow } from 'zustand/shallow';
 
-const useLogcalEditor = () => {
-	const { nodes, edges, onNodesChange, onEdgesChange, addEdge, addNode } =
-		useLogicalEditor(selector, shallow);
+export const useFunctionEditingArea = id => {
 	const {
-		screenToFlowPosition,
-		getIntersectingNodes,
-		getNodes,
-		getEdges,
-		setNodes
-	} = useReactFlow();
+		nodes: globallNodes,
+		edges: globalEdges,
+		setNodes: setGlobalNodes,
+		setEdges: setGlobalEdges
+	} = useLogicalEditor(
+		store => ({
+			nodes: store.nodes,
+			edges: store.edges,
+			setNodes: store.setNodes,
+			setEdges: store.setEdges
+		}),
+		shallow
+	);
+	const groupPosition = useRef(null);
 
-	const nodeTypes = {
-		inputNode: InputNode,
-		outputNode: OutputNode,
-		logicAnd: LogicAnd,
-		groupNode: GroupNode
-	};
+	const filteredNodes = useMemo(() => {
+		return globallNodes.reduce((acc, node) => {
+			if (node.id === id) {
+				// acc.push({ ...node, position: { x: 0, y: 0 } });
+				groupPosition.current = node.position;
+				acc.push(node);
+			}
+			if (node.parentId === id) {
+				acc.push(node);
+			}
+
+			return acc;
+		}, []);
+	}, []);
+
+	const filteredEdges = useMemo(() => {
+		return getConnectedEdges(filteredNodes, globalEdges).filter(edge => {
+			const isExternalSource = filteredNodes.every(n => n.id !== edge.source);
+			const isExternalTarget = filteredNodes.every(n => n.id !== edge.target);
+
+			return !(isExternalSource || isExternalTarget);
+		});
+	}, []);
+
+	const [nodes, setNodes, onNodesChange] = useNodesState(filteredNodes);
+	const [edges, setEdges, onEdgesChange] = useEdgesState(filteredEdges);
+
+	const onConnect = useCallback(
+		params => setEdges(eds => addEdge(params, eds)),
+		[]
+	);
+
+	const { getIntersectingNodes, screenToFlowPosition } = useReactFlow();
+
 	const isValidConnection = connection => {
-		const nodes = getNodes();
-		const edges = getEdges();
 		const target = nodes.find(node => node.id === connection.target);
 
 		const hasCycle = (node, visited = new Set()) => {
@@ -86,9 +119,9 @@ const useLogcalEditor = () => {
 			newNode.parentId = groupNode?.id;
 			// newNode.extent = 'parent';
 			newNode.expandParent = true;
+			console.log(newNode);
+			setNodes(prev => [...prev, newNode]);
 		}
-
-		addNode(newNode);
 	};
 	const onNodeDragStop = useCallback(
 		(_, node) => {
@@ -160,20 +193,35 @@ const useLogcalEditor = () => {
 			})
 		);
 	};
+	const saveChanges = () => {
+		const filteredGlobalNodes = globallNodes.filter(
+			node => !node.id === id || !node.parentId === id
+		);
+		const filteredGlobalEdges = globalEdges.filter(
+			edge => !filteredEdges.some(filteredEdge => filteredEdge.id === edge.id)
+		);
+
+		const newNodes = nodes.map(node =>
+			node.id === id ? { ...node, position: groupPosition.current } : node
+		);
+
+		const updatedNodes = [...filteredGlobalNodes, ...newNodes].sort(sortNodes);
+		const updatedEdges = [...filteredGlobalEdges, ...edges];
+
+		setGlobalNodes(updatedNodes);
+		setGlobalEdges(updatedEdges);
+	};
 
 	return {
 		nodes,
-		edges,
 		onNodesChange,
+		edges,
 		onEdgesChange,
-		addEdge,
-		nodeTypes,
+		onConnect,
 		isValidConnection,
 		onDragOver,
 		onDrop,
 		onNodeDragStop,
-		onNodeDrag
+		saveChanges
 	};
 };
-
-export default useLogcalEditor;
