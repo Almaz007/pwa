@@ -1,49 +1,54 @@
-.aside {
-	position: absolute;
-	top: 20px;
-	right: 20px;
-	border-right: 1px solid #eee;
-	padding: 15px 10px;
-	font-size: 12px;
-	background: #fcfcfc;
+.panel {
+  position: relative;
+  background-color: #fff;
 }
-
-.description {
-	margin-bottom: 10px;
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: #1976d2;
+  font-size: 26px;
 }
-
-.dndnode {
-	height: 20px;
-	padding: 4px;
-	border: 1px solid #1a192b;
-	border-radius: 2px;
-	margin-bottom: 10px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	cursor: grab;
+.btn__arrow {
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
 }
-
-.dndnode.input {
-	border-color: #0041d0;
+.btn__arrow.visible {
+  transform: rotate(180deg);
 }
+.elements__panel {
+  position: absolute;
+  height: 450px;
+  overflow: scroll;
 
-.dndnode.output {
-	border-color: #ff0072;
+  top: calc(100% + 30px);
+  right: 0%;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  border-radius: 5px;
+  transform: translateY(-10px);
+  background-color: #fff;
+  border: 1px solid rgb(196, 196, 196);
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: var(--tran-03);
 }
-
-.reactflow-wrapper {
-	flex-grow: 1;
-	height: 100%;
+.elements__panel.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
 }
-
-.selectall {
-	margin-top: 10px;
+.sidebar__label {
+  margin-bottom: 10px;
 }
-
-@media screen and (min-width: 768px) {
-	.aside {
-		width: 20%;
-		max-width: 250px;
-	}
+.panel__items {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    max-content
+  ); /* Ровно 2 столбца, ширина каждого зависит от содержимого */
+  gap: 20px; /* Расстояние между элементами */
+  justify-content: start; /* Ряды начинаются от начала */
+  align-items: center;
 }

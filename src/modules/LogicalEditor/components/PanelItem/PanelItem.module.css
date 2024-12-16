@@ -1,0 +1,16 @@
+.sidebar-item-drag-image {
+  transform: translate(0, 0);
+  position: absolute;
+  top: -100000px;
+  left: -1000000px;
+}
+
+.panel__item {
+  padding: 5px;
+  cursor: pointer;
+
+  transition: transform 0.2s ease-in-out;
+}
+.panel__item:hover {
+  transform: translateY(-4px);
+}

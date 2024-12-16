@@ -1,25 +1,68 @@
-import { MarkerType } from '@xyflow/react';
-import InputNode from '../components/InputNode/Inputnode';
-import OutputNode from '../components/OutputNode/OutputNode';
-import LogicAnd from '../components/LogicAnd/LogicAnd';
-import GroupNode from '../components/GroupNode/GroupNode';
-import ShapeNode from '../components/ShapeNode/ShapeNode';
+import { MarkerType } from "@xyflow/react";
+import InputNode from "../components/InputNode/Inputnode";
+import OutputNode from "../components/OutputNode/OutputNode";
+import LogicAnd from "../components/LogicAnd/LogicAnd";
+import GroupNode from "../components/GroupNode/GroupNode";
+import { Shape } from "../components/shape";
 
-export const defaultEdgeOptions = {
-	style: {
-		strokeWidth: 2
-	},
-	markerEnd: {
-		type: MarkerType.ArrowClosed
-	}
-};
-export const proOptions = {
-	hideAttribution: true
-};
+export const proOptions = { hideAttribution: true };
 
 export const nodeTypes = {
-	shape: ShapeNode,
-	outputNode: OutputNode,
-	logicAnd: LogicAnd,
-	groupNode: GroupNode
+  shape: Shape,
+  groupNode: GroupNode,
+};
+
+export const meassuredsNodesByType = {
+  inputNode: {
+    width: 210,
+    height: 25,
+  },
+  inputNodeFloat: {
+    width: 210,
+    height: 25,
+  },
+  inputNodeNumber: {
+    width: 210,
+    height: 25,
+  },
+  twoXor: {
+    width: 140,
+    height: 125,
+  },
+  twoAnd: {
+    width: 140,
+    height: 125,
+  },
+  twoOr: {
+    width: 140,
+    height: 125,
+  },
+  sumInt: {
+    width: 140,
+    height: 125,
+  },
+  sumFloat: {
+    width: 140,
+    height: 125,
+  },
+  multInt: {
+    width: 140,
+    height: 125,
+  },
+  multFloat: {
+    width: 140,
+    height: 125,
+  },
+  divInt: {
+    width: 140,
+    height: 125,
+  },
+  divFloat: {
+    width: 140,
+    height: 125,
+  },
+  outputNode: {
+    width: 140,
+    height: 125,
+  },
 };

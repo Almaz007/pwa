@@ -1,10 +1,12 @@
-import { ShapeComponents } from './types';
+import { ShapeComponents } from "./types";
 
-export const Shape = ({ type, width, height, ...svgAttributes }) => {
-	const ShapeComponent = ShapeComponents[type];
+export const Shape = ({ id, data, width, height }) => {
+  const { type } = data;
+  const ShapeComponent = ShapeComponents[type].all;
 
-	if (!ShapeComponent || !width || !height) {
-		return null;
-	}
-	return <ShapeComponent width={width} height={height} {...svgAttributes} />;
+  if (!ShapeComponent || !width || !height) {
+    return null;
+  }
+  console.log(type);
+  return <ShapeComponent id={id} width={width} height={height} data={data} />;
 };

@@ -1,55 +1,70 @@
 import {
-	NodeResizer,
-	useReactFlow,
-	useStore,
-	useStoreApi
-} from '@xyflow/react';
-import styles from './GroupNode.module.css';
-import cn from 'classnames';
-import { getRelativeNodesBounds, isEqual } from '../../helpers/helpers';
-import { memo } from 'react';
-import useDetachNodes from '../../hooks/useDetachNodes';
-import CustomNodeToolbar from '../CustomNodeToolbar/CustomNodeToolbar';
+  NodeResizer,
+  useReactFlow,
+  useStore,
+  useStoreApi,
+} from "@xyflow/react";
+import styles from "./GroupNode.module.css";
+import cn from "classnames";
+import { getRelativeNodesBounds, isEqual } from "../../helpers/helpers";
+import { memo } from "react";
+import useDetachNodes from "../../hooks/useDetachNodes";
+import CustomNodeToolbar from "../CustomNodeToolbar/CustomNodeToolbar";
 
 const GroupNode = ({ id, data }) => {
-	const store = useStoreApi();
-	const { deleteElements } = useReactFlow();
-	const detachNodes = useDetachNodes();
+  //   const [handlesValues, setHandlesValues] = useState({
+  //     input: undefined,
+  //     second: undefined,
+  //   });
 
-	const { minWidth, minHeight, hasChildNodes } = useStore(state => {
-		const childNodes = Array.from(state.nodeLookup.values()).filter(
-			node => node.parentId === id
-		);
+  const store = useStoreApi();
+  const { deleteElements } = useReactFlow();
+  const detachNodes = useDetachNodes();
 
-		const rect = getRelativeNodesBounds(childNodes);
+  const { minWidth, minHeight, hasChildNodes } = useStore((state) => {
+    const childNodes = Array.from(state.nodeLookup.values()).filter(
+      (node) => node.parentId === id
+    );
 
-		return {
-			minWidth: rect.x + rect.width,
-			minHeight: rect.y + rect.height,
-			hasChildNodes: childNodes.length > 0
-		};
-	}, isEqual);
+    const rect = getRelativeNodesBounds(childNodes);
 
-	const onDetach = () => {
-		const childNodeIds = Array.from(store.getState().nodeLookup.values())
-			.filter(n => n.parentId === id)
-			.map(n => n.id);
+    return {
+      minWidth: rect.x + rect.width,
+      minHeight: rect.y + rect.height,
+      hasChildNodes: childNodes.length > 0,
+    };
+  }, isEqual);
 
-		detachNodes(childNodeIds, id);
-	};
+  const onDetach = () => {
+    const childNodeIds = Array.from(store.getState().nodeLookup.values())
+      .filter((n) => n.parentId === id)
+      .map((n) => n.id);
 
-	const onDelete = () => {
-		deleteElements({ nodes: [{ id }] });
-	};
-	return (
-		<div className={cn(styles['group'])}>
-			<NodeResizer minWidth={minWidth} minHeight={minHeight} />
-			<CustomNodeToolbar>
-				<button onClick={onDelete}>delete</button>
-				<button onClick={onDetach}>detach</button>
-			</CustomNodeToolbar>
-		</div>
-	);
+    detachNodes(childNodeIds, id);
+  };
+
+  const onDelete = () => {
+    deleteElements({ nodes: [{ id }] });
+  };
+  return (
+    <div className={cn(styles["group"])}>
+      <NodeResizer minWidth={minWidth} minHeight={minHeight} />
+      <CustomNodeToolbar>
+        <button onClick={onDelete}>delete</button>
+        <button onClick={onDetach}>detach</button>
+      </CustomNodeToolbar>
+      {/* {Object.keys(handlesValues).map((key) => (
+        <div className={styles["handle"]} key={key}>
+          <CustomHandle
+            id={key}
+            position={Position.Left}
+            handleData={(handleData) => {}}
+            connectionsCount={1}
+          />
+        </div>
+      ))} */}
+    </div>
+  );
 };
 
 export default memo(GroupNode);
