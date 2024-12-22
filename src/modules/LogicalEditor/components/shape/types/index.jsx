@@ -1,11 +1,11 @@
 import { InputNode } from "./InputNode/InputNode";
 import { InputNodeView } from "./InputNode/InputNodeView";
-import { TwoXor } from "./TwoXor/TwoXor";
-import { TwoXorView } from "./TwoXor/TwoXorView";
-import { TwoAnd } from "./TwoAnd/TwoAnd";
-import { TwoAndView } from "./TwoAnd/TwoAndView";
-import { TwoOr } from "./TwoOr/TwoOr";
-import { TwoOrView } from "./TwoOr/TwoOrView";
+import { Xor } from "./Xor/Xor";
+import { XorView } from "./Xor/XorView";
+import { And } from "./And/And";
+import { AndView } from "./And/AndView";
+import { Or } from "./Or/Or";
+import { OrView } from "./Or/OrView";
 
 import { SumInt } from "./sumInt/SumInt";
 import { SumIntView } from "./sumInt/SumIntView";
@@ -41,17 +41,17 @@ export const ShapeComponents = {
     view: InputNodeNumberView,
   },
 
-  twoXor: {
-    all: TwoXor,
-    view: TwoXorView,
+  xor: {
+    all: Xor,
+    view: XorView,
   },
-  twoAnd: {
-    all: TwoAnd,
-    view: TwoAndView,
+  and: {
+    all: And,
+    view: AndView,
   },
-  twoOr: {
-    all: TwoOr,
-    view: TwoOrView,
+  or: {
+    all: Or,
+    view: OrView,
   },
   sumInt: {
     all: SumInt,

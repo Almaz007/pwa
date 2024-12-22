@@ -17,7 +17,7 @@ const OutputNode = ({ id, data }) => {
   const { onDelete, onDetach, hasParent } = useToolbar(id);
   const node = useNodesData(connections?.[0]?.source);
   const value = node?.data?.value;
-  console.log("out", value);
+
   return (
     <div className={styles["output__node"]}>
       <div className={styles["centerValue"]}>

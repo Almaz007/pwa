@@ -6,12 +6,27 @@ import {
 import { createWithEqualityFn } from "zustand/traditional";
 import { v4 as uuidv4 } from "uuid";
 import { sortNodes } from "../helpers/helpers";
+import { offsets } from "./arrInstructions";
 
 export const useLogicalEditor = createWithEqualityFn((set, get) => ({
   nodes: [],
   edges: [],
   nodeType: null,
+  offsets: offsets,
 
+  setBoolOffsets(newBoolOffsets) {
+    set((prev) => ({
+      offsets: { ...prev.offsets, boolOffsets: newBoolOffsets },
+    }));
+  },
+  addBoolOffset(offset) {
+    set((prev) => ({
+      offsets: {
+        ...prev.offsets,
+        boolOffsets: { ...prev.boolOffsets, offset },
+      },
+    }));
+  },
   setNodeType(type) {
     set({ nodeType: type });
   },

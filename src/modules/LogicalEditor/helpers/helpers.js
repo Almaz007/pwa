@@ -6,6 +6,7 @@ import {
 } from "@xyflow/system";
 import { customAlphabet } from "nanoid";
 import { meassuredsNodesByType } from "../constants/constants";
+import { v4 as uuidv4 } from "uuid";
 
 export const getNodePositionInsideParent = (node, groupNode) => {
   const position = node.position ?? { x: 0, y: 0 };
@@ -35,7 +36,7 @@ export const getNodePositionInsideParent = (node, groupNode) => {
 
 export const generateNode = (type, position, style) => {
   const nanoid = customAlphabet("12345", 5);
-  const id = nanoid();
+  const id = uuidv4();
   let numForFunction = 0;
 
   switch (type) {
@@ -50,6 +51,7 @@ export const generateNode = (type, position, style) => {
           dataType: "boolean",
           type: "inputNode",
           value: false,
+          resultOffset: 0,
         },
       };
       return node;
@@ -84,7 +86,7 @@ export const generateNode = (type, position, style) => {
       };
       return node;
     }
-    case "twoXor": {
+    case "xor": {
       const node = {
         id,
         type: "shape",
@@ -92,14 +94,15 @@ export const generateNode = (type, position, style) => {
         width: meassuredsNodesByType[type].width,
         height: meassuredsNodesByType[type].height,
         data: {
-          type: "twoXor",
+          type: "xor",
           dataType: "boolean",
+          handlesCount: 2,
           value: undefined,
         },
       };
       return node;
     }
-    case "twoAnd": {
+    case "and": {
       const node = {
         id,
         type: "shape",
@@ -107,14 +110,15 @@ export const generateNode = (type, position, style) => {
         width: meassuredsNodesByType[type].width,
         height: meassuredsNodesByType[type].height,
         data: {
-          type: "twoAnd",
+          type: "and",
           dataType: "boolean",
+          handlesCount: 3,
           value: undefined,
         },
       };
       return node;
     }
-    case "twoOr": {
+    case "or": {
       const node = {
         id,
         type: "shape",
@@ -122,8 +126,9 @@ export const generateNode = (type, position, style) => {
         width: meassuredsNodesByType[type].width,
         height: meassuredsNodesByType[type].height,
         data: {
-          type: "twoOr",
+          type: "or",
           dataType: "boolean",
+          handlesCount: 3,
           value: undefined,
         },
       };
@@ -243,9 +248,9 @@ export const generateNode = (type, position, style) => {
       return node;
     }
     case "groupNode": {
-      numForFunction++;
+      const id = nanoid();
       const node = {
-        id,
+        id: id,
         type,
         position,
         data: {
@@ -303,4 +308,47 @@ export const isEqual = (prev, next) => {
     prev.minHeight === next.minHeight &&
     prev.hasChildNodes === next.hasChildNodes
   );
+};
+
+export const generateHandles = (count) => {
+  const handlesNames = {
+    0: "first",
+    1: "second",
+    2: "third",
+    3: "fourth",
+    4: "fifth",
+    5: "sixth",
+    6: "seventh",
+    7: "eighth",
+  };
+
+  return Object.values(handlesNames)
+    .slice(0, count)
+    .reduce((acc, value) => {
+      acc[value] = undefined;
+      return acc;
+    }, {});
+};
+
+export const downloadFile = (fileData, fileName, mimeType) => {
+  const blob = new Blob([fileData], { type: mimeType });
+
+  let link = document.createElement("a");
+  link.download = fileName;
+
+  let reader = new FileReader();
+  reader.readAsDataURL(blob); // конвертирует Blob в base64 и вызывает onload
+  // создадим Blob из типизированного массива и строк
+
+  reader.onload = function () {
+    link.href = reader.result; // url с данными
+    link.click();
+  };
+};
+export const formatArray = (inputArray) => {
+  return `{${inputArray
+    .map((innerArray) => {
+      return `{${innerArray.map((num) => `{${num}}`).join(",")}}`;
+    })
+    .join(",")}}`;
 };

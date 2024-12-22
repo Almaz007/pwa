@@ -29,7 +29,6 @@ const ElementsPanel = () => {
     };
   }, []);
 
-  console.log("visible: " + visible);
   return (
     <div className={styles["panel"]} ref={panelRef}>
       <StyledButton

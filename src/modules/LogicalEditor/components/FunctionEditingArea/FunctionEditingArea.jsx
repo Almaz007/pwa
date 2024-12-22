@@ -25,6 +25,7 @@ const defaultEdgeOptions = {
 
   style: { strokeWidth: 2 },
 };
+
 function FunctionEditingAreaContent({ id }) {
   const {
     nodes,

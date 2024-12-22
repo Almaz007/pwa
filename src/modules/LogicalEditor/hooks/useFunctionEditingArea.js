@@ -11,13 +11,15 @@ import {
 import { useMemo, useCallback, useState, useRef } from "react";
 import { useLogicalEditor } from "../store/store";
 import {
+  downloadFile,
+  formatArray,
   generateNode,
   getNodePositionInsideParent,
   sortNodes,
 } from "../helpers/helpers";
 import { shallow } from "zustand/shallow";
 import { meassuredsNodesByType } from "../constants/constants";
-import { instructionsData } from "../store/arrInstructions";
+import { instructionsData, offsets } from "../store/arrInstructions";
 
 export const useFunctionEditingArea = (id) => {
   const {
@@ -62,16 +64,18 @@ export const useFunctionEditingArea = (id) => {
 
   const [nodes, setNodes, onNodesChange] = useNodesState(filteredNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(filteredEdges);
-
+  // const [offsets, setOffsets] = useState(offsets);
   const onConnect = useCallback((params) => {
-    setEdges((eds) =>
-      addEdge(
-        { ...params, animated: true, type: ConnectionLineType.SmoothStep },
-        eds
-      )
-    );
+    setEdges((eds) => {
+      const newEdge = {
+        ...params,
+        animated: true,
+        type: ConnectionLineType.SmoothStep,
+      };
+      return addEdge(newEdge, eds);
+    });
   }, []);
-
+  console.log(edges);
   const { getIntersectingNodes, screenToFlowPosition } = useReactFlow();
 
   const checkTypes = (connection) => {
@@ -117,7 +121,6 @@ export const useFunctionEditingArea = (id) => {
     event.preventDefault();
 
     const type = event.dataTransfer.getData("application/reactflow");
-    console.log(type);
     const { width, height } = meassuredsNodesByType[type];
 
     const position = screenToFlowPosition({
@@ -272,25 +275,25 @@ export const useFunctionEditingArea = (id) => {
     };
   };
 
-  const convertData = () => {
-    let num = 0;
+  const convertData = async () => {
+    const scripts = [];
+    const visited = new Set();
 
-    const newArr = {};
     const instructionsNames = Object.keys(instructionsData);
-
     const instructionsBuffer = {
       instructions: [],
       offsets: {},
     };
 
     const outputNodes = nodes.filter((node) => node.data.type === "outputNode");
+    if (!outputNodes.length) return;
 
-    const func = (node, visited = new Set()) => {
+    const func = (node) => {
       if (visited.has(node.id)) return false;
-
       visited.add(node.id);
 
       const type = node?.data?.type;
+      if (type === "inputNode") return;
 
       if (
         instructionsNames.includes(type) &&
@@ -305,28 +308,62 @@ export const useFunctionEditingArea = (id) => {
         );
 
         instructionsBuffer.offsets[type] = offsetData;
+        instructionsBuffer.offsets = Object.fromEntries(
+          Object.entries(instructionsBuffer.offsets).sort(
+            (a, b) => a[1].offset - b[1].offset
+          )
+        );
       }
 
-      newArr[node.id] = node;
-      newArr[node.id]["sources"] = [];
+      const incomers = getIncomers(node, nodes, edges);
+      const scriptItem = {};
+      scriptItem["in_type"] = incomers.length;
+      scriptItem["instruction"] = instructionsBuffer?.offsets[type]?.offset;
+      scriptItem["resultOffset"] = node?.data?.resultOffset;
+      scriptItem["sourcesOffsets"] = [];
 
-      for (const incomer of getIncomers(node, nodes, edges)) {
-        newArr[node.id]["sources"].push(incomer.id);
-        if (!func(incomer, visited) === false) {
-          num++;
-          newArr[incomer.id].number = num;
-        }
+      for (const incomer of incomers) {
+        func(incomer);
+        scriptItem["sourcesOffsets"].push(incomer.data.resultOffset);
       }
+
+      scripts.push(scriptItem);
     };
 
-    if (!outputNodes.length) return;
-    func(outputNodes[0]);
-    newArr[outputNodes[0].id].number = ++num;
-    const res = Object.values(newArr).sort((node1, node2) =>
-      node1.number > node2.number ? 1 : -1
-    );
-    console.log(res);
+    for (const outputNode of outputNodes) {
+      //getIncomers здесь должен всегда возвращат одине элемент
+      for (const incomer of getIncomers(outputNode, nodes, edges)) {
+        func(incomer);
+      }
+    }
+
+    const resultScripts = scripts.map((script) => {
+      const result = [];
+
+      for (const key in script) {
+        const item = script[key];
+
+        if (Array.isArray(item)) {
+          result.push(...item);
+        } else {
+          result.push(item);
+        }
+      }
+
+      return result;
+    });
+
+    const formattedScripts = formatArray(resultScripts);
+
+    console.log(resultScripts);
     console.log(instructionsBuffer);
+
+    downloadFile(formattedScripts, "scripts.txt", "text/plain");
+    downloadFile(
+      JSON.stringify(instructionsBuffer),
+      "buffer.txt",
+      "text/plain"
+    );
   };
 
   return {

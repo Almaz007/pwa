@@ -9,7 +9,6 @@ const CustomHandle = ({ id, position, handleData, connectionsCount }) => {
   const nodeData = useNodesData(connections?.[0]?.source);
 
   useEffect(() => {
-    console.log(id, nodeData);
     handleData(nodeData?.data ? nodeData.data.value : undefined, id);
   }, [nodeData]);
 

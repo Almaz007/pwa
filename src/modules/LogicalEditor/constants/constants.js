@@ -25,15 +25,15 @@ export const meassuredsNodesByType = {
     width: 210,
     height: 25,
   },
-  twoXor: {
+  xor: {
     width: 140,
     height: 125,
   },
-  twoAnd: {
+  and: {
     width: 140,
     height: 125,
   },
-  twoOr: {
+  or: {
     width: 140,
     height: 125,
   },
