@@ -337,11 +337,10 @@ export const downloadFile = (fileData, fileName, mimeType) => {
   link.download = fileName;
 
   let reader = new FileReader();
-  reader.readAsDataURL(blob); // конвертирует Blob в base64 и вызывает onload
-  // создадим Blob из типизированного массива и строк
+  reader.readAsDataURL(blob);
 
   reader.onload = function () {
-    link.href = reader.result; // url с данными
+    link.href = reader.result;
     link.click();
   };
 };
@@ -351,4 +350,14 @@ export const formatArray = (inputArray) => {
       return `{${innerArray.map((num) => `{${num}}`).join(",")}}`;
     })
     .join(",")}}`;
+};
+export const formatBuffer = (inputBuffer) => {
+  const instructions = inputBuffer.instructions.join(",");
+  const offsets = Object.entries(inputBuffer.offsets)
+    .sort((a, b) => a[1].offset - b[1].offset)
+    .map((item) => item[1].offset)
+    .join(",");
+
+  let result = `{{${instructions}},{${offsets}}}`;
+  return result;
 };

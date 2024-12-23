@@ -13,6 +13,7 @@ import { useLogicalEditor } from "../store/store";
 import {
   downloadFile,
   formatArray,
+  formatBuffer,
   generateNode,
   getNodePositionInsideParent,
   sortNodes,
@@ -354,16 +355,13 @@ export const useFunctionEditingArea = (id) => {
     });
 
     const formattedScripts = formatArray(resultScripts);
+    const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
 
     console.log(resultScripts);
     console.log(instructionsBuffer);
 
     downloadFile(formattedScripts, "scripts.txt", "text/plain");
-    downloadFile(
-      JSON.stringify(instructionsBuffer),
-      "buffer.txt",
-      "text/plain"
-    );
+    downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
   };
 
   return {
