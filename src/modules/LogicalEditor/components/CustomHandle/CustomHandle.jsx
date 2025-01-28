@@ -1,16 +1,16 @@
 import { Handle, useHandleConnections, useNodesData } from "@xyflow/react";
 import { useEffect } from "react";
 
-const CustomHandle = ({ id, position, handleData, connectionsCount }) => {
+const CustomHandle = ({ id, position, connectionsCount }) => {
   const connections = useHandleConnections({
     type: "target",
     id,
   });
-  const nodeData = useNodesData(connections?.[0]?.source);
+  // const nodeData = useNodesData(connections?.[0]?.source);
 
-  useEffect(() => {
-    handleData(nodeData?.data ? nodeData.data.value : undefined, id);
-  }, [nodeData]);
+  // useEffect(() => {
+  //   handleData(nodeData?.data ? nodeData.data.value : undefined, id);
+  // }, [nodeData]);
 
   return (
     <Handle

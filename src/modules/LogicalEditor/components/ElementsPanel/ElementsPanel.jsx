@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import styled from "@emotion/styled";
-// import { Button } from "@mui/material";
+
 import cn from "classnames";
 import styles from "./ElementsPanel.module.css";
-import { ShapeComponents } from "../shape/types";
-import { PanelItem } from "../PanelItem/PanelItem";
+
 import { Button } from "@mui/material";
-// import Button from "../../../../components/UI/button/Button";
+
 const StyledButton = styled(Button)({
   fontSize: "18px",
   textTransform: "lowercase",
 });
-const ElementsPanel = () => {
+
+const ElementsPanel = ({ text, children }) => {
   const [visible, setVisible] = useState(false);
   const panelRef = useRef(null);
 
@@ -41,19 +41,15 @@ const ElementsPanel = () => {
         <IoIosArrowDown
           className={cn(styles["btn__arrow"], { [styles["visible"]]: visible })}
         />
-        Элементы
+        {text}
       </StyledButton>
       <div
         className={cn(styles["elements__panel"], {
           [styles["visible"]]: visible,
         })}
       >
-        <div className={styles["sidebar__label"]}>Элементы</div>
-        <div className={styles["panel__items"]}>
-          {Object.keys(ShapeComponents).map((type) => (
-            <PanelItem type={type} key={type} />
-          ))}
-        </div>
+        <div className={styles["sidebar__label"]}>{text}</div>
+        <div className={styles["panel__items"]}>{children}</div>
       </div>
     </div>
   );

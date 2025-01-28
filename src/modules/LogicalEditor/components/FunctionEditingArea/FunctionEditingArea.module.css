@@ -18,15 +18,3 @@
   width: 100%;
   margin: 0;
 }
-
-.panel__row {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  background-color: #fff;
-}
-.left__row {
-  display: flex;
-  gap: 15px;
-}

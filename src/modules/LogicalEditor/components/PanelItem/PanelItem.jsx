@@ -5,7 +5,6 @@ import { meassuredsNodesByType } from "../../constants/constants";
 
 export const PanelItem = ({ type }) => {
   const dragImageRef = useRef(null);
-
   const Item = ShapeComponents[type].view;
   const { width, height } = meassuredsNodesByType[type];
 

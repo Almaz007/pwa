@@ -1,0 +1,67 @@
+.add__func {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 5px;
+
+  position: relative;
+}
+.add__btn {
+  font-size: 35px;
+  color: var(--primary-color);
+  transition: var(--tran-03);
+}
+.add__btn:hover {
+  color: var(--primary-hover-color);
+  transform: translateY(-2px);
+}
+.add__btn svg {
+  display: block;
+}
+.func__btn {
+  font-size: 16px;
+  font-weight: 500;
+  transition: var(--tran-03);
+}
+.add__popup {
+  position: absolute;
+  z-index: 10;
+  background-color: #fff;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: #fff;
+  box-shadow: 4px 4px 8px 0px rgba(34, 60, 80, 0.2);
+  border: 1px solid rgba(34, 60, 80, 0.2);
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--tran-03);
+  padding: 6px;
+}
+.add__popup.show {
+  opacity: 1;
+  visibility: visible;
+}
+.close {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 8px;
+}
+.close__btn {
+  font-size: 24px;
+  transition: var(--tran-03);
+  cursor: pointer;
+}
+.close__btn:hover {
+  color: red;
+}
+.input {
+  width: 100%;
+  padding: 4px;
+  border: 1px solid #848484;
+  margin-bottom: 60px;
+}
+/* .save__btn {
+  pa
+} */

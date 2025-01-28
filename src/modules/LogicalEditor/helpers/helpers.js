@@ -7,6 +7,7 @@ import {
 import { customAlphabet } from "nanoid";
 import { meassuredsNodesByType } from "../constants/constants";
 import { v4 as uuidv4 } from "uuid";
+import { useLogicalEditorState } from "../store/store";
 
 export const getNodePositionInsideParent = (node, groupNode) => {
   const position = node.position ?? { x: 0, y: 0 };
@@ -34,236 +35,128 @@ export const getNodePositionInsideParent = (node, groupNode) => {
   return position;
 };
 
+const getOffset = (dataType) => {
+  if (!dataType) return;
+
+  const { offsetsTypes, setOffsets, addBoolOffset } =
+    useLogicalEditorState.getState();
+  const offsets = [...offsetsTypes[dataType]];
+  const resultOffset = offsets.shift();
+  setOffsets(offsets, dataType);
+
+  return resultOffset;
+};
+
+const nodeConfigurations = {
+  inputBool: { dataType: "bool", type: "inputBool" },
+  inputUstavka: {
+    dataType: "boolean",
+    type: "inputUstavka",
+    value: false,
+    resultOffset: 0,
+  },
+  inputFloat: { dataType: "float", type: "inputFloat" },
+  inputInt: { dataType: "int", type: "inputInt" },
+  xor: { dataType: "bool", type: "xor", handlesCount: 2 },
+  and: { dataType: "bool", type: "and", handlesCount: 3 },
+  or: { dataType: "bool", type: "or", handlesCount: 3 },
+  nand: { dataType: "bool", type: "nand", handlesCount: 3 },
+  nor: { dataType: "bool", type: "nor", handlesCount: 3 },
+  notOperation: { dataType: "bool", type: "notOperation", handlesCount: 1 },
+  sumInt: {
+    dataType: "int",
+    type: "sumInt",
+    operationType: "sum",
+    handlesCount: 2,
+  },
+  sumFloat: {
+    dataType: "float",
+    type: "sumFloat",
+    operationType: "sum",
+    handlesCount: 2,
+  },
+  multInt: {
+    dataType: "int",
+    type: "multInt",
+    operationType: "mult",
+    handlesCount: 2,
+  },
+  multFloat: {
+    dataType: "float",
+    type: "multFloat",
+    operationType: "mult",
+    handlesCount: 2,
+  },
+  subInt: {
+    dataType: "int",
+    type: "subInt",
+    operationType: "sub",
+    handlesCount: 2,
+  },
+  subFloat: {
+    dataType: "float",
+    type: "subFloat",
+    operationType: "sub",
+    handlesCount: 2,
+  },
+  outputNode: { type: "outputNode" },
+  muxBool: {
+    dataType: "bool",
+    type: "muxBool",
+    handlesCount: 3,
+  },
+  muxInt: {
+    dataType: "int",
+    type: "muxInt",
+    handlesCount: 3,
+  },
+  equalsInt: {
+    dataType: "int",
+    type: "equalsInt",
+    operationType: "equals",
+    handlesCount: 2,
+  },
+  equalsFloat: {
+    dataType: "float",
+    type: "equalsFloat",
+    operationType: "equals",
+    handlesCount: 2,
+  },
+  lessInt: { dataType: "int", type: "lessInt", operationType: "less" },
+  lessFloat: { dataType: "float", type: "lessFloat", operationType: "less" },
+  moreInt: { dataType: "int", type: "moreInt", operationType: "more" },
+  moreFloat: { dataType: "float", type: "moreFloat", operationType: "more" },
+};
+
 export const generateNode = (type, position, style) => {
   const nanoid = customAlphabet("12345", 5);
   const id = uuidv4();
-  let numForFunction = 0;
-
-  switch (type) {
-    case "inputNode": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          dataType: "boolean",
-          type: "inputNode",
-          value: false,
-          resultOffset: 0,
-        },
-      };
-      return node;
-    }
-    case "inputNodeFloat": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          dataType: "float",
-          type: "inputNodeFloat",
-          value: 2.5,
-        },
-      };
-      return node;
-    }
-    case "inputNodeNumber": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          dataType: "number",
-          type: "inputNodeNumber",
-          value: 5,
-        },
-      };
-      return node;
-    }
-    case "xor": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "xor",
-          dataType: "boolean",
-          handlesCount: 2,
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "and": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "and",
-          dataType: "boolean",
-          handlesCount: 3,
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "or": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "or",
-          dataType: "boolean",
-          handlesCount: 3,
-          value: undefined,
-        },
-      };
-      return node;
-    }
-
-    case "sumInt": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "sumInt",
-          dataType: "number",
-          operationType: "sum",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-
-    case "sumFloat": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "sumFloat",
-          dataType: "float",
-          operationType: "sum",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "multInt": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "multInt",
-          dataType: "number",
-          operationType: "mult",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "multFloat": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "multFloat",
-          dataType: "float",
-          operationType: "mult",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "divInt": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "divInt",
-          dataType: "number",
-          operationType: "div",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "divFloat": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "divFloat",
-          dataType: "float",
-          operationType: "div",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "outputNode": {
-      const node = {
-        id,
-        type: "shape",
-        position,
-        width: meassuredsNodesByType[type].width,
-        height: meassuredsNodesByType[type].height,
-        data: {
-          type: "outputNode",
-          dataType: "any",
-          value: undefined,
-        },
-      };
-      return node;
-    }
-    case "groupNode": {
-      const id = nanoid();
-      const node = {
-        id: id,
-        type,
-        position,
-        data: {
-          name: `function ${id}`,
-        },
-        style: style ?? {
-          width: 600,
-          height: 400,
-        },
-      };
-      return node;
-    }
+  console.log(type);
+  if (type === "groupNode") {
+    const groupId = nanoid();
+    return {
+      id: groupId,
+      type,
+      position,
+      data: { name: `function ${groupId}` },
+      style: style ?? { width: 600, height: 400 },
+    };
   }
+
+  const config = nodeConfigurations[type];
+
+  if (!config) {
+    throw new Error(`Unknown node type: ${type}`);
+  }
+
+  return {
+    id,
+    type: "shape",
+    position,
+    width: meassuredsNodesByType[type]?.width ?? 100,
+    height: meassuredsNodesByType[type]?.height ?? 100,
+    data: { ...config, resultOffset: getOffset(config.dataType) },
+  };
 };
 
 export const sortNodes = (a, b) => {
@@ -344,19 +237,18 @@ export const downloadFile = (fileData, fileName, mimeType) => {
     link.click();
   };
 };
-export const formatArray = (inputArray) => {
-  return `{${inputArray
+export const formatArray = (inputArray, instructionsBuffer) => {
+  const sumBytes = instructionsBuffer.instructions.length;
+
+  return `0x10 1<<7 4 ${sumBytes} {${inputArray
     .map((innerArray) => {
       return `{${innerArray.map((num) => `{${num}}`).join(",")}}`;
     })
-    .join(",")}}`;
+    .join(",")}} сrс32`;
 };
 export const formatBuffer = (inputBuffer) => {
   const instructions = inputBuffer.instructions.join(",");
-  const offsets = Object.entries(inputBuffer.offsets)
-    .sort((a, b) => a[1].offset - b[1].offset)
-    .map((item) => item[1].offset)
-    .join(",");
+  const offsets = inputBuffer.offsets.join(",");
 
   let result = `{{${instructions}},{${offsets}}}`;
   return result;

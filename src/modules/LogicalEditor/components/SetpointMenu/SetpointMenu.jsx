@@ -3,13 +3,15 @@ import cn from "classnames";
 import BurgerBtn from "../../../../components/UI/BurgerBtn/BurgerBtn";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { setPointMenuSelector } from "../../store/selectors";
-import { useLogicalEditor } from "../../store/store";
+import { useLogicalEditorState } from "../../store/store";
 import { shallow } from "zustand/shallow";
 import { generateNode } from "../../helpers/helpers";
 import { CiCirclePlus } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import { Button, Checkbox } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { AddFunc } from "../AddFunc/AddFunc";
+import { nanoid } from "nanoid";
 
 const FuncButton = styled(Button)({
   fontSize: 16,
@@ -19,7 +21,7 @@ const FuncButton = styled(Button)({
 const SetpointMenu = () => {
   const [visible, setVisible] = useState(false);
   const menuRef = useRef(null);
-  const store = useLogicalEditor(setPointMenuSelector, shallow);
+  const store = useLogicalEditorState(setPointMenuSelector, shallow);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,8 +37,23 @@ const SetpointMenu = () => {
     };
   }, []);
 
-  const handleClick = () => {
-    const node = generateNode("groupNode", { x: 0, y: 0 });
+  const handleClick = (name) => {
+    const id = nanoid();
+    const node = {
+      id: id,
+      type: "groupNode",
+      position: {
+        x: 0,
+        y: 0,
+      },
+      data: {
+        name: name,
+      },
+      style: {
+        width: 600,
+        height: 400,
+      },
+    };
     store.addNode(node);
   };
 
@@ -64,17 +81,14 @@ const SetpointMenu = () => {
   return (
     <div ref={menuRef} className={styles["setpoint__menu"]}>
       <BurgerBtn visible={visible} setVisible={setVisible} />
+
       <div
         className={cn(styles["menu"], {
           [styles["visible"]]: visible,
         })}
       >
-        <div className={styles["add__func"]}>
-          <button className={styles["add__btn"]} onClick={handleClick}>
-            <CiCirclePlus />
-          </button>
-          <div>добавление функции</div>
-        </div>
+        <AddFunc handleClick={handleClick} />
+
         <div className={styles["func_column"]}>
           {funcs.map((func, index) => (
             <div key={func.id} className={styles["func"]}>

@@ -6,9 +6,11 @@ import Maximeters from "../pages/maximeters/Maximeters";
 import Oscilogramms from "../pages/oscilogramms/Oscilogramms";
 import Terminal from "../pages/terminal/Terminal";
 import Layout from "../components/layout/Layout";
+
 import Testing from "../pages/settings/testing/Testing";
 import GeneralSettings from "../pages/settings/generalSettings/GeneralSettings";
-import CommunicationSettings from "../pages/settings/communicationSettings/CommunicationSettings";
+import CommunicationSettings from "../pages/settings/CommunicationSettings/components/CommunicationSettings/CommunicationSettings";
+
 import Monitoring from "../pages/monitoring/Monitoring";
 import Setpoints from "../pages/setpoints/Setpoints";
 import {
@@ -17,7 +19,6 @@ import {
   LogicalEditorLayout,
 } from "../modules/LogicalEditor";
 import DeviceIndication from "../pages/deviceIndication/DeviceIndication";
-import { TestFlow } from "../modules/LogicalEditor/components/test/TestFlow";
 
 export const router = createBrowserRouter([
   {
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "eventLog",
-        element: <TestFlow />,
+        element: <EventLog />,
       },
       {
         path: "accidentLog",

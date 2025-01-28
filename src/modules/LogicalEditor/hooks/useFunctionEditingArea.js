@@ -9,7 +9,7 @@ import {
   getIncomers,
 } from "@xyflow/react";
 import { useMemo, useCallback, useState, useRef } from "react";
-import { useLogicalEditor } from "../store/store";
+import { useLogicalEditorState } from "../store/store";
 import {
   downloadFile,
   formatArray,
@@ -20,7 +20,7 @@ import {
 } from "../helpers/helpers";
 import { shallow } from "zustand/shallow";
 import { meassuredsNodesByType } from "../constants/constants";
-import { instructionsData, offsets } from "../store/arrInstructions";
+import { instructions } from "../store/arrInstructions";
 
 export const useFunctionEditingArea = (id) => {
   const {
@@ -28,17 +28,20 @@ export const useFunctionEditingArea = (id) => {
     edges: globalEdges,
     setNodes: setGlobalNodes,
     setEdges: setGlobalEdges,
-  } = useLogicalEditor(
+    edgesNum,
+    incEdgesNum,
+  } = useLogicalEditorState(
     (store) => ({
       nodes: store.nodes,
       edges: store.edges,
       setNodes: store.setNodes,
       setEdges: store.setEdges,
+      edgesNum: store.edgesNum,
+      incEdgesNum: store.incEdgesNum,
     }),
     shallow
   );
   const groupPosition = useRef(null);
-
   const filteredNodes = useMemo(() => {
     return globallNodes.reduce((acc, node) => {
       if (node.id === id) {
@@ -66,17 +69,23 @@ export const useFunctionEditingArea = (id) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(filteredNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(filteredEdges);
   // const [offsets, setOffsets] = useState(offsets);
-  const onConnect = useCallback((params) => {
-    setEdges((eds) => {
-      const newEdge = {
-        ...params,
-        animated: true,
-        type: ConnectionLineType.SmoothStep,
-      };
-      return addEdge(newEdge, eds);
-    });
-  }, []);
-  console.log(edges);
+  const onConnect = useCallback(
+    (params) => {
+      setEdges((eds) => {
+        const newEdge = {
+          ...params,
+          type: "custom-edge",
+          data: {
+            label: `net ${edgesNum}`,
+          },
+          animated: true,
+        };
+        incEdgesNum();
+        return addEdge(newEdge, eds);
+      });
+    },
+    [edgesNum]
+  );
   const { getIntersectingNodes, screenToFlowPosition } = useReactFlow();
 
   const checkTypes = (connection) => {
@@ -89,7 +98,6 @@ export const useFunctionEditingArea = (id) => {
       connectionItems[0].data.dataType === connectionItems[1].data.dataType
     );
   };
-
   const isValidConnection = (connection) => {
     // if (!checkTypes(connection)) {
     //   console.log("error types");
@@ -112,12 +120,10 @@ export const useFunctionEditingArea = (id) => {
     if (connection.source === target.id) return false;
     return !hasCycle(target);
   };
-
   const onDragOver = useCallback((event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   }, []);
-
   const onDrop = (event) => {
     event.preventDefault();
 
@@ -226,10 +232,6 @@ export const useFunctionEditingArea = (id) => {
     );
   };
   const saveChanges = () => {
-    console.log(filteredNodes);
-    console.log(filteredEdges);
-
-    console.log("globalNodes:", globallNodes);
     const filteredGlobalNodes = globallNodes.filter((node) => {
       if (node.type === "shape") {
         return !(node.parentId === id);
@@ -237,14 +239,11 @@ export const useFunctionEditingArea = (id) => {
         return !(node.id === id);
       }
     });
-    console.log("filteredGlobalNodes:", filteredGlobalNodes);
 
-    console.log("globalEdges: ", globalEdges);
     const filteredGlobalEdges = globalEdges.filter(
       (edge) =>
         !filteredEdges.some((filteredEdge) => filteredEdge.id === edge.id)
     );
-    console.log("filteredGlobalEdges:", filteredGlobalEdges);
 
     const newNodes = nodes.map((node) =>
       node.id === id ? { ...node, position: groupPosition.current } : node
@@ -252,12 +251,10 @@ export const useFunctionEditingArea = (id) => {
 
     const updatedNodes = [...filteredGlobalNodes, ...newNodes].sort(sortNodes);
     const updatedEdges = [...filteredGlobalEdges, ...edges];
-    console.log(updatedNodes);
-    console.log(updatedEdges);
+
     setGlobalNodes(updatedNodes);
     setGlobalEdges(updatedEdges);
   };
-
   const generateOffsetItem = (instructionData, offsets) => {
     const lastKey = Object.keys(offsets).pop();
 
@@ -275,7 +272,6 @@ export const useFunctionEditingArea = (id) => {
       offset: lastItem.offset + lastItem.lengthInBytes,
     };
   };
-
   const convertData = async () => {
     const scripts = [];
     const visited = new Set();
