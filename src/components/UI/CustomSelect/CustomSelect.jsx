@@ -1,10 +1,10 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
-export const CustomSelect = ({ values, value, handleChange }) => {
+export const CustomSelect = ({ values, value, handleChange, label }) => {
   return (
-    <FormControl fullWidth>
-      <InputLabel id="demo-simple-select-label">Age</InputLabel>
-      <Select value={value} label="processor" onChange={handleChange}>
+    <FormControl sx={{ minWidth: 120 }}>
+      <InputLabel id="demo-simple-select-label">{label}</InputLabel>
+      <Select value={value} label={label} onChange={handleChange}>
         {values.map((value) => (
           <MenuItem key={value} value={value}>
             {value}

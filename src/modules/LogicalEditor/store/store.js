@@ -13,6 +13,7 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
   edges: [],
   nodeType: null,
   processorType: "ARM",
+  saveType: "files",
   offsetsTypes: {
     bool: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     int: [16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76],
@@ -21,9 +22,12 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
     ],
   },
   edgesNum: 1,
+
   changeProcessorType: (type) => {
-    console.log("gg");
     set({ processorType: type });
+  },
+  changeSaveType: (type) => {
+    set({ saveType: type });
   },
   incEdgesNum() {
     set((prev) => ({ edgesNum: prev.edgesNum + 1 }));

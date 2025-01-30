@@ -26,6 +26,8 @@ const useLogcalEditor = () => {
     addNode,
     processorType,
     changeProcessorType,
+    saveType,
+    changeSaveType,
   } = useLogicalEditorState(selector, shallow);
   const {
     screenToFlowPosition,
@@ -182,9 +184,6 @@ const useLogcalEditor = () => {
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
 
-    console.log(resultScripts);
-    console.log(instructionsBuffer);
-    console.log("ddd");
     downloadFile(formattedScripts, "scripts.txt", "text/plain");
     downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
   };
@@ -300,6 +299,14 @@ const useLogcalEditor = () => {
     );
   };
 
+  const connectBluetooth = async () => {
+    const port = await navigator.serial.requestPort();
+    // const ports = await navigator.serial.getPorts();
+    // console.log(ports);
+    // Wait for the serial port to open.
+    await port.open({ baudRate: 9600 });
+    console.log(port);
+  };
   return {
     nodes,
     edges,
@@ -315,6 +322,9 @@ const useLogcalEditor = () => {
     saveConfig,
     processorType,
     changeProcessorType,
+    saveType,
+    changeSaveType,
+    connectBluetooth,
   };
 };
 

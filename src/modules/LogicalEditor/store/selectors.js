@@ -8,6 +8,8 @@ export const selector = (store) => ({
   setNodes: store.setNodes,
   processorType: store.processorType,
   changeProcessorType: store.changeProcessorType,
+  saveType: store.saveType,
+  changeSaveType: store.changeSaveType,
 });
 
 export const setPointMenuSelector = (store) => ({
@@ -15,6 +17,7 @@ export const setPointMenuSelector = (store) => ({
   addNode: store.addNode,
   setNodes: store.setNodes,
 });
+
 export const setNodeTypeSelector = (store) => ({
   setNodeType: store.setNodeType,
 });

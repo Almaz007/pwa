@@ -253,3 +253,11 @@ export const formatBuffer = (inputBuffer) => {
   let result = `{{${instructions}},{${offsets}}}`;
   return result;
 };
+export const sendBluetooth = async (buffer, scripts) => {
+  const textEncoder = new TextEncoderStream();
+  const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+
+  const writer = textEncoder.writable.getWriter();
+
+  await writer.write("hello");
+};

@@ -29,6 +29,9 @@ function LogicalEditorContent() {
     saveConfig,
     processorType,
     changeProcessorType,
+    saveType,
+    changeSaveType,
+    connectBluetooth,
   } = useLogcalEditor();
 
   const { cut, copy, paste, bufferedNodes } = useCopyPaste();
@@ -65,14 +68,34 @@ function LogicalEditorContent() {
         snapGrid={snapGrid}
       >
         <Panel className={styles["button__group"]} position="top-center">
-          <Button variant="contained" onClick={saveConfig}>
+          <Button
+            variant="contained"
+            onClick={saveConfig}
+            sx={{ minWidth: 90 }}
+          >
             save
           </Button>
           <CustomSelect
             values={["ARM", "RISCV"]}
+            label={"processor type"}
             value={processorType}
             handleChange={(e) => changeProcessorType(e.target.value)}
           />
+          <CustomSelect
+            values={["bluetooth", "files"]}
+            label={"save type"}
+            value={saveType}
+            handleChange={(e) => changeSaveType(e.target.value)}
+          />
+          {saveType === "bluetooth" && (
+            <Button
+              variant="contained"
+              sx={{ minWidth: 90 }}
+              onClick={connectBluetooth}
+            >
+              connect
+            </Button>
+          )}
         </Panel>
 
         <SelectedNodesToolbar />
