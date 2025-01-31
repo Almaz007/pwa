@@ -1,4 +1,8 @@
 const instructionsARM = {
+  inputBool: {},
+  inputFloat: {},
+  inputInt: {},
+  outputNode: {},
   multInt: {
     instructions: {
       2: {
@@ -1105,6 +1109,10 @@ const instructionsARM = {
 };
 
 const instructionsRISCV = {
+  inputBool: {},
+  inputFloat: {},
+  inputInt: {},
+  outputNode: {},
   multInt: {
     instructions: {
       2: {
@@ -1128,7 +1136,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   subInt: {
     instructions: {
       2: {
@@ -1150,7 +1157,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   sumInt: {
     instructions: {
       2: {
@@ -1172,7 +1178,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   notOperation: {
     instructions: {
       1: {
@@ -1372,7 +1377,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   moreInt: {
     instructions: {
       2: {
@@ -1404,7 +1408,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   lessInt: {
     instructions: {
       2: {
@@ -1436,7 +1439,6 @@ const instructionsRISCV = {
       },
     },
   },
-
   muxBool: {
     instructions: {
       3: {

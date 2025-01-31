@@ -12,6 +12,7 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
   nodes: [],
   edges: [],
   nodeType: null,
+  port: undefined,
   processorType: "ARM",
   saveType: "files",
   offsetsTypes: {
@@ -23,6 +24,9 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
   },
   edgesNum: 1,
 
+  setPort(port) {
+    set({ port });
+  },
   changeProcessorType: (type) => {
     set({ processorType: type });
   },

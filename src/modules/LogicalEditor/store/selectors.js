@@ -10,6 +10,8 @@ export const selector = (store) => ({
   changeProcessorType: store.changeProcessorType,
   saveType: store.saveType,
   changeSaveType: store.changeSaveType,
+  port: store.port,
+  setPort: store.setPort,
 });
 
 export const setPointMenuSelector = (store) => ({

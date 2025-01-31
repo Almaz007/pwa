@@ -244,7 +244,7 @@ export const formatArray = (inputArray, instructionsBuffer) => {
     .map((innerArray) => {
       return `{${innerArray.map((num) => `{${num}}`).join(",")}}`;
     })
-    .join(",")}} сrс32`;
+    .join(",")}} crc32`;
 };
 export const formatBuffer = (inputBuffer) => {
   const instructions = inputBuffer.instructions.join(",");

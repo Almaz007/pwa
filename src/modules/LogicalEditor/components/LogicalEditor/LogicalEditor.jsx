@@ -32,8 +32,9 @@ function LogicalEditorContent() {
     saveType,
     changeSaveType,
     connectBluetooth,
+    port,
   } = useLogcalEditor();
-
+  console.log(port);
   const { cut, copy, paste, bufferedNodes } = useCopyPaste();
   const canCopy = nodes.some(({ selected }) => selected);
   const canPaste = bufferedNodes.length > 0;
@@ -68,13 +69,6 @@ function LogicalEditorContent() {
         snapGrid={snapGrid}
       >
         <Panel className={styles["button__group"]} position="top-center">
-          <Button
-            variant="contained"
-            onClick={saveConfig}
-            sx={{ minWidth: 90 }}
-          >
-            save
-          </Button>
           <CustomSelect
             values={["ARM", "RISCV"]}
             label={"processor type"}
@@ -88,13 +82,34 @@ function LogicalEditorContent() {
             handleChange={(e) => changeSaveType(e.target.value)}
           />
           {saveType === "bluetooth" && (
-            <Button
-              variant="contained"
-              sx={{ minWidth: 90 }}
-              onClick={connectBluetooth}
-            >
-              connect
-            </Button>
+            <>
+              <Button
+                variant="contained"
+                sx={{ minWidth: 90 }}
+                onClick={connectBluetooth}
+              >
+                connect
+              </Button>
+              <Button
+                variant="contained"
+                onClick={saveConfig}
+                sx={{ minWidth: 90 }}
+                disabled={!port}
+              >
+                save
+              </Button>
+            </>
+          )}
+          {saveType === "files" && (
+            <>
+              <Button
+                variant="contained"
+                onClick={saveConfig}
+                sx={{ minWidth: 90 }}
+              >
+                save
+              </Button>
+            </>
           )}
         </Panel>
 

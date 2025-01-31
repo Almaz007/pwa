@@ -2,7 +2,6 @@ import { useReactFlow, getOutgoers, getIncomers } from "@xyflow/react";
 import { useLogicalEditorState } from "../store/store";
 import { selector } from "../store/selectors";
 import { shallow } from "zustand/shallow";
-import { useState } from "react";
 import GroupNode from "../components/GroupNode/GroupNode";
 import { useCallback, useMemo } from "react";
 
@@ -28,6 +27,8 @@ const useLogcalEditor = () => {
     changeProcessorType,
     saveType,
     changeSaveType,
+    port,
+    setPort,
   } = useLogicalEditorState(selector, shallow);
   const {
     screenToFlowPosition,
@@ -38,10 +39,35 @@ const useLogcalEditor = () => {
   } = useReactFlow();
 
   const instructionsData = instructions[processorType];
-  console.log(processorType);
+
   const nodeTypes = {
     groupNode: GroupNode,
   };
+
+  const saveFunc = useMemo(() => {
+    const saveFiles = (formattedScripts, formattedInstructionsBuffer) => {
+      downloadFile(formattedScripts, "scripts.txt", "text/plain");
+      downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
+    };
+    const saveBluetooth = async (
+      formattedScripts,
+      formattedInstructionsBuffer
+    ) => {
+      const textEncoder = new TextEncoderStream();
+      const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+
+      const writer = textEncoder.writable.getWriter();
+
+      await writer.write(
+        `${formattedScripts}\n\r${formattedInstructionsBuffer}`
+      );
+
+      writer.close();
+      await writableStreamClosed;
+    };
+
+    return saveType === "files" ? saveFiles : saveBluetooth;
+  }, [saveType, port]);
 
   const isValidConnection = (connection) => {
     const nodes = getNodes();
@@ -181,11 +207,12 @@ const useLogcalEditor = () => {
 
       return result;
     });
+    console.log(resultScripts);
+    console.log(instructionsBuffer);
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
 
-    downloadFile(formattedScripts, "scripts.txt", "text/plain");
-    downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
+    saveFunc(formattedScripts, formattedInstructionsBuffer);
   };
 
   const onDragOver = useCallback((event) => {
@@ -301,11 +328,8 @@ const useLogcalEditor = () => {
 
   const connectBluetooth = async () => {
     const port = await navigator.serial.requestPort();
-    // const ports = await navigator.serial.getPorts();
-    // console.log(ports);
-    // Wait for the serial port to open.
     await port.open({ baudRate: 9600 });
-    console.log(port);
+    setPort(port);
   };
   return {
     nodes,
@@ -325,6 +349,7 @@ const useLogcalEditor = () => {
     saveType,
     changeSaveType,
     connectBluetooth,
+    port,
   };
 };
 
