@@ -1,16 +1,19 @@
-import styles from './LogicalEditorLayout.module.css';
-import { Outlet } from 'react-router-dom';
-import SetpointMenu from '../SetpointMenu/SetpointMenu';
-const LogicalEditorLayout = () => {
-	return (
-		<div className={styles['layout']}>
-			<div className={styles['configuraton']}>
-				<SetpointMenu />
-			</div>
+import styles from "./LogicalEditorLayout.module.css";
+import { Outlet } from "react-router-dom";
+import SetpointMenu from "../SetpointMenu/SetpointMenu";
+import { SnackbarProvider } from "notistack";
 
-			<Outlet />
-		</div>
-	);
+const LogicalEditorLayout = () => {
+  return (
+    <div className={styles["layout"]}>
+      <SnackbarProvider />
+      <div className={styles["configuraton"]}>
+        <SetpointMenu />
+      </div>
+
+      <Outlet />
+    </div>
+  );
 };
 
 export default LogicalEditorLayout;

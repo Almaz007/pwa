@@ -21,6 +21,7 @@ import {
 import { shallow } from "zustand/shallow";
 import { meassuredsNodesByType } from "../constants/constants";
 import { instructions } from "../store/arrInstructions";
+import { enqueueSnackbar } from "notistack";
 
 export const useFunctionEditingArea = (id) => {
   const {
@@ -92,15 +93,14 @@ export const useFunctionEditingArea = (id) => {
     const connectionItems = nodes.filter(
       (node) => node.id === connection.target || node.id === connection.source
     );
-    console.log(connectionItems[0].data.dataType);
-    console.log(connectionItems[1].data.dataType);
+
     return (
       connectionItems[0].data.dataType === connectionItems[1].data.dataType
     );
   };
   const isValidConnection = (connection) => {
     // if (!checkTypes(connection)) {
-    //   console.log("error types");
+    //   enqueueSnackbar("типа не соответсвуют", { variant: "error" });
     //   return;
     // }
 

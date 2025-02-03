@@ -175,12 +175,12 @@ const useLogcalEditor = () => {
       scriptItem["instruction"] =
         instructionsBuffer?.primitivesData[type]?.[handlesCount].offset;
       scriptItem["resultOffset"] = node?.data?.resultOffset;
-      scriptItem["sourcesOffsets"] = [];
+      scriptItem["sourcesOffsets"] = [0, 0, 0, 0, 0, 0, 0, 0];
 
-      for (const incomer of incomers) {
+      incomers.forEach((incomer, index) => {
         generateScript(incomer);
-        scriptItem["sourcesOffsets"].push(incomer.data.resultOffset);
-      }
+        scriptItem["sourcesOffsets"][index] = incomer.data.resultOffset;
+      });
 
       scripts.push(scriptItem);
     };
@@ -207,8 +207,7 @@ const useLogcalEditor = () => {
 
       return result;
     });
-    console.log(resultScripts);
-    console.log(instructionsBuffer);
+
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
 

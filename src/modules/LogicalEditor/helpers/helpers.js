@@ -237,20 +237,23 @@ export const downloadFile = (fileData, fileName, mimeType) => {
     link.click();
   };
 };
+
 export const formatArray = (inputArray, instructionsBuffer) => {
-  const sumBytes = instructionsBuffer.instructions.length;
+  const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0);
 
-  return `0x10 1<<7 4 ${sumBytes} {${inputArray
+  return `0x10 128 ${sumBytes + 6} [${inputArray
     .map((innerArray) => {
-      return `{${innerArray.map((num) => `{${num}}`).join(",")}}`;
+      return innerArray.join(",");
     })
-    .join(",")}} crc32`;
+    .join(",")}] crc32`;
 };
-export const formatBuffer = (inputBuffer) => {
-  const instructions = inputBuffer.instructions.join(",");
-  const offsets = inputBuffer.offsets.join(",");
 
-  let result = `{{${instructions}},{${offsets}}}`;
+export const formatBuffer = (instructionsBuffer) => {
+  const sumBytes = instructionsBuffer.instructions.length;
+  const instructions = instructionsBuffer.instructions.join(",");
+  const offsets = instructionsBuffer.offsets.join(",");
+
+  let result = `0x10 128 ${sumBytes + 6} [${instructions},${offsets}] crc32`;
   return result;
 };
 export const sendBluetooth = async (buffer, scripts) => {
