@@ -1,0 +1,29 @@
+.terminal {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 20px;
+  justify-content: space-between;
+  height: 100%;
+}
+.btns {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 0px 20px;
+}
+.button {
+  cursor: pointer;
+  font-size: 30px;
+  transition: 0.3s all;
+}
+
+.connect:hover {
+  color: var(--connect-icon-color);
+}
+.disconnect:hover {
+  color: var(--disconnect-icon-color);
+}
+.clear:hover {
+  color: var(--clear-icon-color);
+}

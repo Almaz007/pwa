@@ -1,30 +1,40 @@
 import styles from "./terminal.module.css";
 import LogItem from "../logItem/LogItem";
 import SendForm from "../sendForm/SendForm";
-
-import { useBluetoothState } from "../../store/store";
 import {
   MdOutlineBluetoothConnected,
   MdOutlineBluetoothDisabled,
 } from "react-icons/md";
 import { AiOutlineClear } from "react-icons/ai";
 import cn from "classnames";
-import { useState } from "react";
+import { useTermianl } from "../../hooks/useTerminal";
+import { connectionTypes } from "../../constants/constatns";
+import { CustomSelect } from "../../../../components/UI/CustomSelect/CustomSelect";
 
-export const BleTerminal = () => {
-  const [connect, disconnect, logs] = useBluetoothState((state) => [
-    state.connect,
-    state.disconnect,
-    state.logs,
-  ]);
-  const [text, setText] = useState("");
-  const handleClick = () => {};
+export const Terminal = () => {
+  const {
+    connectionType,
+    setConnectionType,
+    text,
+    setText,
+    logs,
+    clearLogs,
+    send,
+    connect,
+    disconnect,
+  } = useTermianl();
+
+  const handleClick = () => {
+    setText("");
+    send(text);
+  };
+  console.log(logs);
   return (
     <div className={styles["terminal"]}>
       <div className={styles["logs__block"]}>
         <div className={styles["btns"]}>
           <AiOutlineClear
-            onClick={() => console.log("clear")}
+            onClick={clearLogs}
             className={cn(styles["button"], styles["clear"])}
           />
           <MdOutlineBluetoothConnected
@@ -35,15 +45,21 @@ export const BleTerminal = () => {
             onClick={() => disconnect()}
             className={cn(styles["button"], styles["disconnect"])}
           />
+          <CustomSelect
+            values={[...connectionTypes]}
+            value={connectionType}
+            handleChange={setConnectionType}
+            label="тип соединения"
+          />
         </div>
         <div className={styles["logs"]}>
           {logs.map((log) => (
-            <LogItem key={log.id} log={log} setText={setText} />
+            <LogItem key={log.id} log={log} />
           ))}
         </div>
       </div>
 
-      <SendForm handleClick={handleClick} text={text} />
+      <SendForm handleClick={handleClick} text={text} setText={setText} />
     </div>
   );
 };

@@ -222,7 +222,19 @@ export const generateHandles = (count) => {
       return acc;
     }, {});
 };
-
+function getByteSize(num) {
+  if (num >= 0) {
+    if (num <= 0xff) return 1; // Uint8 (1 байт)
+    if (num <= 0xffff) return 2; // Uint16 (2 байта)
+    if (num <= 0xffffffff) return 4; // Uint32 (4 байта)
+    return 8; // BigInt (8 байт и больше)
+  } else {
+    if (num >= -0x80 && num <= 0x7f) return 1; // Int8 (1 байт)
+    if (num >= -0x8000 && num <= 0x7fff) return 2; // Int16 (2 байта)
+    if (num >= -0x80000000 && num <= 0x7fffffff) return 4; // Int32 (4 байта)
+    return 8; // BigInt (8 байт и больше)
+  }
+}
 export const downloadFile = (fileData, fileName, mimeType) => {
   const blob = new Blob([fileData], { type: mimeType });
 
@@ -239,23 +251,28 @@ export const downloadFile = (fileData, fileName, mimeType) => {
 };
 
 export const formatArray = (inputArray, instructionsBuffer) => {
-  const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0);
-
-  return `0x10 128 ${sumBytes + 6} [${inputArray
+  const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0) + 6;
+  // getByteSize(sumBytes);
+  return `10 80 ${sumBytes.toString(16)} 0 0 0 ${inputArray
     .map((innerArray) => {
-      return innerArray.join(",");
+      return innerArray.map((item) => item.toString(16)).join(" ");
     })
-    .join(",")}] crc32`;
+    .join(" ")}`;
 };
 
 export const formatBuffer = (instructionsBuffer) => {
-  const sumBytes = instructionsBuffer.instructions.length;
-  const instructions = instructionsBuffer.instructions.join(",");
-  const offsets = instructionsBuffer.offsets.join(",");
+  const sumBytes = instructionsBuffer.instructions.length + 6;
+  const instructions = instructionsBuffer.instructions
+    .map((item) => item.slice(2))
+    .join(" ");
+  const offsets = instructionsBuffer.offsets
+    .map((item) => item.toString(16))
+    .join(" ");
 
-  let result = `0x10 128 ${sumBytes + 6} [${instructions},${offsets}] crc32`;
+  let result = `10 80 ${sumBytes.toString(16)} 0 0 0 ${instructions}`; //${offsets} crc32`
   return result;
 };
+
 export const sendBluetooth = async (buffer, scripts) => {
   const textEncoder = new TextEncoderStream();
   const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);

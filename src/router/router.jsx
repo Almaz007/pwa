@@ -4,7 +4,7 @@ import DeviceInfo from "../pages/deviceInfo/DeviceInfo";
 import EventLog from "../pages/eventLog/EventLog";
 import Maximeters from "../pages/maximeters/Maximeters";
 import Oscilogramms from "../pages/oscilogramms/Oscilogramms";
-import Terminal from "../pages/terminal/Terminal";
+import TerminalPage from "../pages/TerminalPage/TerminalPage";
 import Layout from "../components/layout/Layout";
 
 import Testing from "../pages/settings/testing/Testing";
@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Terminal />,
+        element: <TerminalPage />,
       },
       {
         path: "monitoring",
