@@ -289,15 +289,18 @@ export const useWebsocketState = createWithEqualityFn((set, get) => ({
     set({ webSocket: {} });
 
     ws.onopen = () => {
+      const { addLog } = get();
       addLog("Connected to server");
       ws.send("Hello, Server!");
     };
 
     ws.onmessage = (event) => {
+      const { addLog } = get();
       addLog(`Message from server: ${event.data}`, "in");
     };
 
     ws.onclose = () => {
+      const { addLog } = get();
       addLog("Connection closed");
     };
   },
