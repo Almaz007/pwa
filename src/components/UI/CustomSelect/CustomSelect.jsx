@@ -4,11 +4,7 @@ export const CustomSelect = ({ values, value, handleChange, label }) => {
   return (
     <FormControl sx={{ minWidth: 120 }}>
       <InputLabel id="demo-simple-select-label">{label}</InputLabel>
-      <Select
-        value={value}
-        label={label}
-        onChange={(event) => handleChange(event.target.value)}
-      >
+      <Select value={value} label={label} onChange={handleChange}>
         {values.map((value) => (
           <MenuItem key={value} value={value}>
             {value}

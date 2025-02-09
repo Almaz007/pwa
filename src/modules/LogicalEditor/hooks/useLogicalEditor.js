@@ -49,10 +49,7 @@ const useLogcalEditor = () => {
       downloadFile(formattedScripts, "scripts.txt", "text/plain");
       downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
     };
-    const saveBluetooth = async (
-      formattedScripts,
-      formattedInstructionsBuffer
-    ) => {
+    const saveUart = async (formattedScripts, formattedInstructionsBuffer) => {
       const textEncoder = new TextEncoderStream();
       const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
 
@@ -66,7 +63,7 @@ const useLogcalEditor = () => {
       await writableStreamClosed;
     };
 
-    return saveType === "files" ? saveFiles : saveBluetooth;
+    return saveType === "files" ? saveFiles : saveUart;
   }, [saveType, port]);
 
   const isValidConnection = (connection) => {

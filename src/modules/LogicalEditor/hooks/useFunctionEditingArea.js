@@ -95,14 +95,18 @@ export const useFunctionEditingArea = (id) => {
     );
 
     return (
-      connectionItems[0].data.dataType === connectionItems[1].data.dataType
+      connectionItems[0].data.dataType === connectionItems[1].data.dataType ||
+      connectionItems[0].data.dataType === "any" ||
+      connectionItems[1].data.dataType === "any"
     );
   };
   const isValidConnection = (connection) => {
-    // if (!checkTypes(connection)) {
-    //   enqueueSnackbar("типа не соответсвуют", { variant: "error" });
-    //   return;
-    // }
+    if (!checkTypes(connection)) {
+      enqueueSnackbar("типы элементов не соответсвуют друг другу", {
+        variant: "error",
+      });
+      return;
+    }
 
     const target = nodes.find((node) => node.id === connection.target);
 

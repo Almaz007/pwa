@@ -58,6 +58,9 @@ import { SubIntView } from "./math/subInt/SubIntView";
 import { SubFloat } from "./math/subFloat/SubFloat";
 import { SubFloatView } from "./math/subFloat/SubFloatView";
 
+import { Dtrigger } from "./logic/Dtigger/Dtrigger";
+import { DtriggerView } from "./logic/Dtigger/DtriggerView";
+
 export const ShapeComponents = {
   inputInt: {
     all: InputInt,
@@ -154,5 +157,9 @@ export const ShapeComponents = {
   lessFloat: {
     all: LessFloat,
     view: LessFloatView,
+  },
+  dtrigger: {
+    all: Dtrigger,
+    view: DtriggerView,
   },
 };

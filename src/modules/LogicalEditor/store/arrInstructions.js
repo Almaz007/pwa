@@ -3,6 +3,7 @@ const instructionsARM = {
   inputFloat: {},
   inputInt: {},
   outputNode: {},
+  dtrigger: {},
   multInt: {
     instructions: {
       2: {
@@ -1113,6 +1114,7 @@ const instructionsRISCV = {
   inputFloat: {},
   inputInt: {},
   outputNode: {},
+  dtrigger: {},
   multInt: {
     instructions: {
       2: {

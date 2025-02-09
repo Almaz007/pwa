@@ -28,7 +28,7 @@ export const Terminal = () => {
     setText("");
     send(text);
   };
-  console.log(logs);
+
   return (
     <div className={styles["terminal"]}>
       <div className={styles["logs__block"]}>
@@ -48,7 +48,7 @@ export const Terminal = () => {
           <CustomSelect
             values={[...connectionTypes]}
             value={connectionType}
-            handleChange={setConnectionType}
+            handleChange={(event) => setConnectionType(event.target.value)}
             label="тип соединения"
           />
         </div>

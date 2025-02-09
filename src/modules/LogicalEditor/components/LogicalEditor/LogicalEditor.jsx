@@ -76,12 +76,12 @@ function LogicalEditorContent() {
             handleChange={(e) => changeProcessorType(e.target.value)}
           />
           <CustomSelect
-            values={["bluetooth", "files"]}
+            values={["uart", "files"]}
             label={"save type"}
             value={saveType}
             handleChange={(e) => changeSaveType(e.target.value)}
           />
-          {saveType === "bluetooth" && (
+          {saveType === "uart" && (
             <>
               <Button
                 variant="contained"

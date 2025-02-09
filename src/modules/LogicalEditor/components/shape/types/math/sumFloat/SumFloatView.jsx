@@ -5,7 +5,7 @@ export const SumFloatView = ({ width, height }) => {
     <OperationView
       width={width}
       height={height}
-      dataType={"Int"}
+      dataType={"Float"}
       text={"SumInt"}
     />
   );

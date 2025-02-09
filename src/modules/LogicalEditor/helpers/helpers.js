@@ -36,7 +36,7 @@ export const getNodePositionInsideParent = (node, groupNode) => {
 };
 
 const getOffset = (dataType) => {
-  if (!dataType) return;
+  if (!dataType || dataType === "any") return;
 
   const { offsetsTypes, setOffsets, addBoolOffset } =
     useLogicalEditorState.getState();
@@ -99,7 +99,7 @@ const nodeConfigurations = {
     operationType: "sub",
     handlesCount: 2,
   },
-  outputNode: { type: "outputNode" },
+  outputNode: { type: "outputNode", dataType: "any" },
   muxBool: {
     dataType: "bool",
     type: "muxBool",
@@ -126,6 +126,7 @@ const nodeConfigurations = {
   lessFloat: { dataType: "float", type: "lessFloat", operationType: "less" },
   moreInt: { dataType: "int", type: "moreInt", operationType: "more" },
   moreFloat: { dataType: "float", type: "moreFloat", operationType: "more" },
+  dtrigger: { dataType: "bool", type: "dtrigger", handlesCount: 1 },
 };
 
 export const generateNode = (type, position, style) => {

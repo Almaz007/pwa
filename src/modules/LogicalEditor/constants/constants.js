@@ -113,4 +113,8 @@ export const meassuredsNodesByType = {
     width: 140,
     height: 165,
   },
+  dtrigger: {
+    width: 140,
+    height: 125,
+  },
 };
