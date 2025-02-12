@@ -174,61 +174,74 @@ export const useBluetoothState = createWithEqualityFn((set, get) => ({
 
     set({ logs: [...logs, newMessage] });
   },
+
   connect: async () => {
-    const port = await navigator.serial.requestPort();
-    await port.open({ baudRate: 9600 });
-
-    const textDecoder = new TextDecoderStream();
-    const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
-
-    let reader;
     const { addLog } = get();
 
-    set((prev) => ({
-      portData: {
-        ...prev.portData,
-        port: port,
-        readableStreamClosed,
-      },
-    }));
+    try {
+      const port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 9600 });
 
-    while (port.readable && get().portData.keepReading) {
-      reader = textDecoder.readable.getReader();
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+
+      let reader;
+      addLog("Успешное подключение");
+
+      console.log(port);
       set((prev) => ({
         portData: {
           ...prev.portData,
-          reader: reader,
+          port: port,
+          readableStreamClosed,
         },
       }));
 
-      try {
-        while (true) {
-          const { value, done } = await reader.read();
-          if (done) {
-            console.log("break ");
-            // reader.cancel() has been called.
-            break;
-          }
-          // value is a Uint8Array.
-          console.log(value);
-        }
-      } catch (error) {
-        // Handle error...
-        addLog(`Error: ${err.message}`, "err");
-      } finally {
-        // Allow the serial port to be closed later.
-        reader.releaseLock();
-      }
-    }
+      while (port.readable && get().portData.keepReading) {
+        reader = textDecoder.readable.getReader();
+        set((prev) => ({
+          portData: {
+            ...prev.portData,
+            reader: reader,
+          },
+        }));
+        let buffer = "";
 
-    // await port.close();
+        try {
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) {
+              break;
+            }
+            if (value) {
+              buffer += value; // Накопление строки
+
+              if (buffer.includes("\r")) {
+                buffer = buffer.slice(0, -1);
+                addLog(buffer, "in");
+                buffer = "";
+              }
+            }
+          }
+        } catch (error) {
+          // Handle error...
+          addLog(`Error: ${err.message}`, "err");
+        } finally {
+          // Allow the serial port to be closed later.
+          reader.releaseLock();
+        }
+      }
+    } catch (err) {
+      addLog(`Error: ${err.message}`, "err");
+    }
   },
+
   disconnect: async () => {
     const {
-      portData: { reader, readableStreamClosed },
+      portData: { reader, readableStreamClosed, port },
       addLog,
     } = get();
-
+    console.log(port);
     set((prev) => ({
       portData: {
         ...prev.portData,
@@ -241,26 +254,30 @@ export const useBluetoothState = createWithEqualityFn((set, get) => ({
         /* Ignore the error */
       });
       port.close();
+
+      addLog("порт успешно закрыт");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");
     }
   },
+
   clearLogs() {
     set({ logs: [] });
   },
 
   send: async (message) => {
-    const {
-      portData: { port },
-      addLog,
-    } = get();
+    const { portData, addLog } = get();
+    const { port } = portData;
+    console.log(port);
 
     try {
-      if (portData.port) {
-        throw new Error({ message: "сначала подключитесь" });
+      if (!portData.port.connected) {
+        throw new Error("сначала подключитесь");
       }
       const textEncoder = new TextEncoderStream();
-      const writableStreamclosed = textEncoder.readable.pipeTo(port.writable);
+      const writableStreamclosed = textEncoder.readable.pipeTo(
+        portData.port.writable
+      );
 
       const writer = textEncoder.writable.getWriter();
 
@@ -270,6 +287,7 @@ export const useBluetoothState = createWithEqualityFn((set, get) => ({
       writer.close();
       await writableStreamclosed;
     } catch (err) {
+      console.log(err.message);
       addLog(`Error: ${err.message}`, "err");
     }
   },
