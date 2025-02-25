@@ -1,3 +1,12 @@
+.battery {
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.battery__icon {
+  font-size: 60px;
+}
 .bulb__row {
   display: flex;
   gap: 30px;
@@ -11,7 +20,21 @@
   gap: 20px;
   cursor: pointer;
 }
-.color {
+
+.blinker {
+  font-size: 80px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.blinker__icon {
+  cursor: pointer;
+}
+.blinker__icon.active {
+  color: var(--primary-color);
+}
+.text {
   font-size: 30px;
 }
 .red {

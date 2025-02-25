@@ -4,40 +4,40 @@ import { createWithEqualityFn } from "zustand/traditional";
 
 export const useBleState = createWithEqualityFn((set, get) => ({
   device: null,
-  characteristic: null,
+  characteristics: {},
   logs: [],
   uuids: {
     serviceUuid: "f1d43f8b-3778-4efd-a778-1eb6f51e60ff",
-    characteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
+    sendCharacteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
+    receiveCharacteristicUuid: "1c364265-2a7f-4444-9b31-45748e778766",
   },
-  bulbs: [
-    {
+  batteryValue: "100",
+  options: {
+    1: {
       id: 1,
+      state: 0,
       color: "red",
     },
-    {
+    2: {
       id: 2,
+      state: 0,
       color: "green",
     },
-    {
+    3: {
       id: 3,
+      state: 0,
       color: "blue",
     },
-  ],
-  selectedBulbs: [],
+    4: { id: 4, state: 0 },
+  },
 
-  setSelectedBulbs(id) {
-    const { selectedBulbs } = get();
-
-    if (selectedBulbs.includes(id)) {
-      set((prev) => ({
-        selectedBulbs: [
-          ...prev.selectedBulbs.filter((bulbId) => bulbId !== id),
-        ],
-      }));
-    } else {
-      set((prev) => ({ selectedBulbs: [...prev.selectedBulbs, id] }));
-    }
+  setOptions(id) {
+    set((prev) => ({
+      options: {
+        ...prev.options,
+        [id]: { ...prev.options[id], state: !!prev.options[id].state ? 0 : 1 },
+      },
+    }));
   },
 
   addLog: (message, type = "") => {
@@ -52,7 +52,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   boundHandleCharacteristicValueChanged: (event) => {
     const { addLog } = get();
     const value = new TextDecoder().decode(event.target.value);
-
+    set({ batteryValue: value });
     addLog(value, "in");
   },
   boundHandleDisconnection: () => {
@@ -87,22 +87,28 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     const service = await server.getPrimaryService(uuids.serviceUuid);
 
     addLog("Service found, getting characteristic...");
-    const characteristic = await service.getCharacteristic(
-      uuids.characteristicUuid
+    const sendCharacteristic = await service.getCharacteristic(
+      uuids.sendCharacteristicUuid
+    );
+    const receiveCharacteristic = await service.getCharacteristic(
+      uuids.receiveCharacteristicUuid
     );
 
-    addLog("Characteristic found");
-    set({ characteristic });
+    addLog("Characteristics found");
+    set({ characteristics: { sendCharacteristic, receiveCharacteristic } });
   },
   startNotifications: async () => {
-    const { addLog, characteristic, boundHandleCharacteristicValueChanged } =
-      get();
+    const {
+      addLog,
+      characteristics: { receiveCharacteristic },
+      boundHandleCharacteristicValueChanged,
+    } = get();
 
     addLog("Starting notifications...");
-    await characteristic.startNotifications();
+    await receiveCharacteristic.startNotifications();
     addLog("Notifications started");
 
-    characteristic.addEventListener(
+    receiveCharacteristic.addEventListener(
       "characteristicvaluechanged",
       boundHandleCharacteristicValueChanged
     );
@@ -163,7 +169,11 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     set({ device: null, characteristic: null });
   },
   send: (text) => {
-    const { characteristic, device, addLog } = get();
+    const {
+      characteristics: { sendCharacteristic },
+      device,
+      addLog,
+    } = get();
     try {
       text = String(text || "");
 
@@ -176,7 +186,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
         throw new Error("необходимо подключиться к устройству");
       }
 
-      characteristic.writeValue(new TextEncoder().encode(text));
+      sendCharacteristic.writeValue(new TextEncoder().encode(text));
       addLog(text, "out");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");
