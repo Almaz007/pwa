@@ -138,7 +138,7 @@ const useLogcalEditor = () => {
 
       if (visited.has(node.id)) return false;
       visited.add(node.id);
-
+      console.log(type);
       // проверка на то, есть ли тип элемента в списках примитивов, и не добавлена ли она уже до этого в буффер
       //если все хорошо то в буффер добавляется инструкция конкретного примитива, и ифформация о смещении для нее
       if (
@@ -167,7 +167,8 @@ const useLogcalEditor = () => {
 
       const incomers = getIncomers(node, nodes, edges);
       const scriptItem = {};
-      scriptItem["in_type"] = incomers.length;
+      scriptItem["in_type"] =
+        instructionsData[type].instructions[handlesCount].in_type;
       scriptItem["instruction"] =
         instructionsBuffer?.primitivesData[type]?.[handlesCount].offset;
       scriptItem["resultOffset"] = node?.data?.resultOffset;

@@ -6,6 +6,7 @@ import cn from "classnames";
 import { shallow } from "zustand/shallow";
 import { PiFan } from "react-icons/pi";
 import { LuBatteryCharging } from "react-icons/lu";
+import { PiFanFill } from "react-icons/pi";
 
 export const Test = () => {
   const [send, options, setOptions, batteryValue] = useBleState(
@@ -40,20 +41,19 @@ export const Test = () => {
         {Object.entries(options)
           .slice(0, -1)
           .map((option) => (
-            <div
-              key={option[0]}
-              className={cn(styles["bulb"], {
-                [styles[option[1].color]]: !!option[1].state,
-              })}
-              onClick={() => setOptions(option[0])}
-            >
-              <IoBulbSharp />
+            <div key={option[0]} className={styles["bulb__item"]}>
+              <IoBulbSharp
+                className={cn(styles["bulb"], styles[option[1].color], {
+                  [styles["active"]]: !!option[1].state,
+                })}
+                onClick={() => setOptions(option[0])}
+              />
               <div className={styles["text"]}>{option[1].color}</div>
             </div>
           ))}
       </div>
       <div className={styles["blinker"]}>
-        <PiFan
+        <PiFanFill
           className={cn(styles["blinker__icon"], {
             [styles["active"]]: !!options[4].state,
           })}

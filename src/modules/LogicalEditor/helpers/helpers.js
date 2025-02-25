@@ -122,11 +122,36 @@ const nodeConfigurations = {
     operationType: "equals",
     handlesCount: 2,
   },
-  lessInt: { dataType: "int", type: "lessInt", operationType: "less" },
-  lessFloat: { dataType: "float", type: "lessFloat", operationType: "less" },
-  moreInt: { dataType: "int", type: "moreInt", operationType: "more" },
-  moreFloat: { dataType: "float", type: "moreFloat", operationType: "more" },
-  dtrigger: { dataType: "bool", type: "dtrigger", handlesCount: 1 },
+  lessInt: {
+    dataType: "int",
+    type: "lessInt",
+    operationType: "less",
+    handlesCount: 2,
+  },
+  lessFloat: {
+    dataType: "float",
+    type: "lessFloat",
+    operationType: "less",
+    handlesCount: 2,
+  },
+  moreInt: {
+    dataType: "int",
+    type: "moreInt",
+    operationType: "more",
+    handlesCount: 2,
+  },
+  moreFloat: {
+    dataType: "float",
+    type: "moreFloat",
+    operationType: "more",
+    handlesCount: 2,
+  },
+  dtrigger: {
+    dataType: "bool",
+    type: "dtrigger",
+    handlesCount: 1,
+    handlesCount: 2,
+  },
 };
 
 export const generateNode = (type, position, style) => {

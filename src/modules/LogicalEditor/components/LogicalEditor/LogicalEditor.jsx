@@ -34,7 +34,6 @@ function LogicalEditorContent() {
     connectBluetooth,
     port,
   } = useLogcalEditor();
-  console.log(port);
   const { cut, copy, paste, bufferedNodes } = useCopyPaste();
   const canCopy = nodes.some(({ selected }) => selected);
   const canPaste = bufferedNodes.length > 0;
@@ -43,8 +42,6 @@ function LogicalEditorContent() {
     type: ConnectionLineType.SmoothStep,
     style: { strokeWidth: 2 },
   };
-
-  console.log(processorType);
 
   return (
     <div className={styles["logical__editor"]}>
