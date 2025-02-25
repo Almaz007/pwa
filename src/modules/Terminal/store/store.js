@@ -69,11 +69,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
 
     addLog("Requesting bluetooth device...");
     const device = await navigator.bluetooth.requestDevice({
-      filters: [
-        {
-          namePrefix: "realme",
-        },
-      ],
+      acceptAllDevices: true,
       optionalServices: [uuids.serviceUuid],
     });
 
