@@ -19,6 +19,7 @@ import {
   LogicalEditorLayout,
 } from "../modules/LogicalEditor";
 import DeviceIndication from "../pages/deviceIndication/DeviceIndication";
+import { TestPage } from "../pages/test/Test";
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <TerminalPage />,
+      },
+      {
+        path: "test",
+        element: <TestPage />,
       },
       {
         path: "monitoring",

@@ -22,6 +22,77 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
       80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140,
     ],
   },
+  inputTypes: {
+    NO_USE: 0,
+    bool: {
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+    },
+    int: {
+      2: 8,
+      3: 9,
+      4: 10,
+      5: 11,
+      6: 12,
+      7: 13,
+    },
+    float: {
+      2: 14,
+      3: 15,
+      4: 16,
+      5: 17,
+      6: 18,
+      7: 19,
+    },
+    dobule: {
+      2: 20,
+      3: 21,
+      4: 22,
+      5: 23,
+      6: 24,
+      7: 25,
+    },
+    TM1: 26,
+  },
+
+  // typedef enum {
+  //   NO_USE=0,
+  //   BOOL2=1,
+  //   BOOL3=2,
+  //   BOOL4=3,
+  //   BOOL5=4,
+  //   BOOL6=5,
+  //   BOOL7=6,
+  //   BOOL8=7,
+
+  //   INT3=8,
+  //   INT4=9,
+  //   INT5=10,
+  //   INT6=11,
+  //   INT7=12,
+  //   INT8=13,
+
+  //   FLOAT3=14,
+  //   FLOAT4=15,
+  //   FLOAT5=16,
+  //   FLOAT6=17,
+  //   FLOAT7=18,
+  //   FLOAT8=19,
+
+  //   DOUBLE3=20,
+  //   DOUBLE4=21,
+  //   DOUBLE5=22,
+  //   DOUBLE6=23,
+  //   DOUBLE7=24,
+  //   DOUBLE8=25,
+
+  //   TM1=26
+  // }types ;
   edgesNum: 1,
 
   setPort(port) {

@@ -1,0 +1,10 @@
+.test__page {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.test__page__title {
+  font-size: 40px;
+}

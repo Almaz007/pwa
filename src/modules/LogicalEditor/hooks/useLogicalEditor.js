@@ -145,7 +145,6 @@ const useLogcalEditor = () => {
         instructionsNames.includes(type) &&
         !instructionsBuffer.primitivesData[type]?.[handlesCount]
       ) {
-        console.log(type);
         instructionsBuffer.instructions.push(
           ...instructionsData[type].instructions[handlesCount].instruction
         );
@@ -172,8 +171,9 @@ const useLogcalEditor = () => {
       scriptItem["instruction"] =
         instructionsBuffer?.primitivesData[type]?.[handlesCount].offset;
       scriptItem["resultOffset"] = node?.data?.resultOffset;
-      scriptItem["sourcesOffsets"] = [0, 0, 0, 0, 0, 0, 0, 0];
+      scriptItem["sourcesOffsets"] = [0, 0, 0, 0, 0, 0, 0];
 
+      scriptItem["sourcesOffsets"];
       incomers.forEach((incomer, index) => {
         generateScript(incomer);
         scriptItem["sourcesOffsets"][index] = incomer.data.resultOffset;
@@ -204,6 +204,8 @@ const useLogcalEditor = () => {
 
       return result;
     });
+
+    console.log(resultScripts, instructionsBuffer);
 
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);

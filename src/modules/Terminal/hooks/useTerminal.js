@@ -1,16 +1,8 @@
 import { useState, useMemo } from "react";
 import { connectionTypes } from "../constants/constatns";
 import { shallow } from "zustand/shallow";
-import {
-  useBleState,
-  useBluetoothState,
-  useWebsocketState,
-} from "../store/store";
-import {
-  bleSelector,
-  bluetoothSelector,
-  webSocketSelector,
-} from "../store/selectors";
+import { useBleState, useUartState } from "../store/store";
+import { bleSelector, uartSelector } from "../store/selectors";
 
 export const useTermianl = () => {
   const {
@@ -22,21 +14,14 @@ export const useTermianl = () => {
   } = useBleState(bleSelector, shallow);
 
   const {
-    connect: connectBluetooth,
-    disconnect: disconnectBluetooth,
-    logs: BluetoothLogs,
-    clearLogs: BluetoothClearLogs,
-    send: BluetoothSend,
-  } = useBluetoothState(bluetoothSelector, shallow);
-  const {
-    connect: connectWebSocket,
-    disconnect: disconnectWebSocket,
-    logs: WebSocketLogs,
-    clearLogs: WebSocketClearLogs,
-    send: WebSocketSend,
-  } = useWebsocketState(webSocketSelector, shallow);
+    connect: connectUart,
+    disconnect: disconnectUart,
+    logs: UartLogs,
+    clearLogs: UartClearLogs,
+    send: UartSend,
+  } = useUartState(uartSelector, shallow);
 
-  const [connectionType, setConnectionType] = useState(connectionTypes[1]);
+  const [connectionType, setConnectionType] = useState(connectionTypes[0]);
   const [text, setText] = useState("");
 
   const { connect, disconnect, logs, clearLogs, send } = useMemo(() => {
@@ -48,24 +33,17 @@ export const useTermianl = () => {
         clearLogs: bleClearLogs,
         send: bleSend,
       },
-      bluetooth: {
-        connect: connectBluetooth,
-        disconnect: disconnectBluetooth,
-        logs: BluetoothLogs,
-        clearLogs: BluetoothClearLogs,
-        send: BluetoothSend,
-      },
-      webSocket: {
-        connect: connectWebSocket,
-        disconnect: disconnectWebSocket,
-        logs: WebSocketLogs,
-        clearLogs: WebSocketClearLogs,
-        send: WebSocketSend,
+      uart: {
+        connect: connectUart,
+        disconnect: disconnectUart,
+        logs: UartLogs,
+        clearLogs: UartClearLogs,
+        send: UartSend,
       },
     };
 
     return connections[connectionType];
-  }, [connectionType, bleLogs, BluetoothLogs]);
+  }, [connectionType, bleLogs, UartLogs]);
 
   return {
     connectionType,

@@ -1,3 +1,3 @@
 import { Terminal } from "./components/Terminal/Terminal";
-
-export { Terminal };
+import { useBleState } from "./store/store";
+export { Terminal, useBleState };

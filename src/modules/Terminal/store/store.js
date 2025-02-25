@@ -6,9 +6,38 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   device: null,
   characteristic: null,
   logs: [],
-  uiids: {
-    serviceUuid: "170ea494-cb37-4351-8361-40b0b6e3a308",
-    characteristicUuid: "8374dda7-30aa-441a-93c0-327f5333b042",
+  uuids: {
+    serviceUuid: "f1d43f8b-3778-4efd-a778-1eb6f51e60ff",
+    characteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
+  },
+  bulbs: [
+    {
+      id: 1,
+      color: "red",
+    },
+    {
+      id: 2,
+      color: "green",
+    },
+    {
+      id: 3,
+      color: "blue",
+    },
+  ],
+  selectedBulbs: [],
+
+  setSelectedBulbs(id) {
+    const { selectedBulbs } = get();
+
+    if (selectedBulbs.includes(id)) {
+      set((prev) => ({
+        selectedBulbs: [
+          ...prev.selectedBulbs.filter((bulbId) => bulbId !== id),
+        ],
+      }));
+    } else {
+      set((prev) => ({ selectedBulbs: [...prev.selectedBulbs, id] }));
+    }
   },
 
   addLog: (message, type = "") => {
@@ -36,7 +65,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   },
 
   requestBluetoothDevice: async () => {
-    const { addLog, boundHandleDisconnection } = get();
+    const { addLog, boundHandleDisconnection, uuids } = get();
 
     addLog("Requesting bluetooth device...");
     const device = await navigator.bluetooth.requestDevice({
@@ -45,7 +74,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
           namePrefix: "realme",
         },
       ],
-      optionalServices: ["170ea494-cb37-4351-8361-40b0b6e3a308"],
+      optionalServices: [uuids.serviceUuid],
     });
 
     addLog(`${device.name} bluetooth device selected`);
@@ -53,17 +82,17 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     set({ device }); // Remember device.
   },
   connectDeviceAndCacheCharacteristic: async () => {
-    const { uiids, addLog, device } = get();
+    const { uuids, addLog, device } = get();
 
     addLog("Connecting to GATT server...");
     const server = await device.gatt.connect();
 
     addLog("GATT server connected, getting service...");
-    const service = await server.getPrimaryService(uiids.serviceUuid);
+    const service = await server.getPrimaryService(uuids.serviceUuid);
 
     addLog("Service found, getting characteristic...");
     const characteristic = await service.getCharacteristic(
-      uiids.characteristicUuid
+      uuids.characteristicUuid
     );
 
     addLog("Characteristic found");
@@ -138,21 +167,20 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     set({ device: null, characteristic: null });
   },
   send: (text) => {
-    const { devices, currentDeviceId, addLog } = get();
+    const { characteristic, device, addLog } = get();
     try {
       text = String(text || "");
 
       // Return rejected promise immediately if data is empty.
       if (!text) {
-        throw new Error("Data must be not empty");
+        throw new Error("нельзя отправить пустые данные");
       }
 
-      if (!currentDeviceId) {
-        throw new Error("Устройство должно быть выбрано");
+      if (!device) {
+        throw new Error("необходимо подключиться к устройству");
       }
 
-      const { sendCharacteristic } = devices.characteristics;
-      sendCharacteristic.writeValue(new TextEncoder().encode(text));
+      characteristic.writeValue(new TextEncoder().encode(text));
       addLog(text, "out");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");
@@ -160,7 +188,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   },
 }));
 
-export const useBluetoothState = createWithEqualityFn((set, get) => ({
+export const useUartState = createWithEqualityFn((set, get) => ({
   portData: {
     port: {},
     reader: {},
@@ -215,7 +243,7 @@ export const useBluetoothState = createWithEqualityFn((set, get) => ({
             }
             if (value) {
               buffer += value; // Накопление строки
-
+              console.log(value);
               if (buffer.includes("\r")) {
                 buffer = buffer.slice(0, -1);
                 addLog(buffer, "in");
@@ -290,41 +318,5 @@ export const useBluetoothState = createWithEqualityFn((set, get) => ({
       console.log(err.message);
       addLog(`Error: ${err.message}`, "err");
     }
-  },
-}));
-
-export const useWebsocketState = createWithEqualityFn((set, get) => ({
-  logs: [],
-  webSocket: {},
-  addLog: (message, type = "") => {
-    const { logs } = get();
-    const newMessage = { id: uuidv4(), message, type };
-
-    set({ logs: [...logs, newMessage] });
-  },
-  connect() {
-    const ws = new WebSocket("ws://localhost:8080");
-    set({ webSocket: {} });
-
-    ws.onopen = () => {
-      const { addLog } = get();
-      addLog("Connected to server");
-      ws.send("Hello, Server!");
-    };
-
-    ws.onmessage = (event) => {
-      const { addLog } = get();
-      addLog(`Message from server: ${event.data}`, "in");
-    };
-
-    ws.onclose = () => {
-      const { addLog } = get();
-      addLog("Connection closed");
-    };
-  },
-  disconnect() {},
-  clearLogs() {},
-  send(message) {
-    socket.send(message);
   },
 }));

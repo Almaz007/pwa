@@ -1,0 +1,25 @@
+.bulb__row {
+  display: flex;
+  gap: 30px;
+}
+
+.bulb {
+  font-size: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+}
+.color {
+  font-size: 30px;
+}
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}
+.blue {
+  color: blue;
+}

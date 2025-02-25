@@ -1,1 +1,1 @@
-export const connectionTypes = ["ble", "bluetooth", "webSocket"];
+export const connectionTypes = ["ble", "uart"];
