@@ -146,6 +146,24 @@ const nodeConfigurations = {
     operationType: "more",
     handlesCount: 2,
   },
+  timerInt: {
+    dataType: "int",
+    type: "timerInt",
+    operationType: "timer",
+    handlesCount: 0,
+  },
+  сonstInt: {
+    dataType: "int",
+    type: "сonstInt",
+    operationType: "none",
+    handlesCount: 0,
+  },
+  constBoolean: {
+    dataType: "bool",
+    type: "constBoolean",
+    operationType: "none",
+    handlesCount: 0,
+  },
   dtrigger: {
     dataType: "bool",
     type: "dtrigger",
@@ -277,9 +295,9 @@ export const downloadFile = (fileData, fileName, mimeType) => {
 };
 
 export const formatArray = (inputArray, instructionsBuffer) => {
-  const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0) + 6;
-  // getByteSize(sumBytes);
-  return `10 80 ${sumBytes.toString(16)} 0 0 0 ${inputArray
+  const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0);
+
+  return `10 80 01 0 0 0 0 ${sumBytes.toString(16)} ${inputArray
     .map((innerArray) => {
       return innerArray.map((item) => item.toString(16)).join(" ");
     })
@@ -287,7 +305,7 @@ export const formatArray = (inputArray, instructionsBuffer) => {
 };
 
 export const formatBuffer = (instructionsBuffer) => {
-  const sumBytes = instructionsBuffer.instructions.length + 6;
+  const sumBytes = instructionsBuffer.instructions.length;
   const instructions = instructionsBuffer.instructions
     .map((item) => item.slice(2))
     .join(" ");
@@ -295,7 +313,7 @@ export const formatBuffer = (instructionsBuffer) => {
     .map((item) => item.toString(16))
     .join(" ");
 
-  let result = `10 80 ${sumBytes.toString(16)} 0 0 0 ${instructions}`; //${offsets} crc32`
+  let result = `10 80 02  0 0 0 ${sumBytes.toString(16)} ${instructions}`; //${offsets} crc32`
   return result;
 };
 

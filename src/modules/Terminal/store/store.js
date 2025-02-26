@@ -7,7 +7,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   characteristics: {},
   logs: [],
   uuids: {
-    serviceUuid: "f1d43f8b-3778-4efd-a778-1eb6f51e60ff",
+    serviceUuid: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
     sendCharacteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
     receiveCharacteristicUuid: "1c364265-2a7f-4444-9b31-45748e778766",
   },
@@ -57,11 +57,12 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   },
   boundHandleDisconnection: () => {
     const { device, addLog, connectDeviceAndCacheCharacteristic } = get();
-    addLog(
-      `"${device.name}"  bluetooth device disconnected, trying to reconnect...`
-    );
+    addLog(`"${device.name}"  bluetooth device disconnected`);
+    // addLog(
+    //   `"${device.name}"  bluetooth device disconnected, trying to reconnect...`
+    // );
 
-    connectDeviceAndCacheCharacteristic();
+    // connectDeviceAndCacheCharacteristic();
   },
 
   requestBluetoothDevice: async () => {
@@ -182,11 +183,35 @@ export const useBleState = createWithEqualityFn((set, get) => ({
         throw new Error("нельзя отправить пустые данные");
       }
 
-      if (!device) {
+      if (!device || !sendCharacteristic) {
         throw new Error("необходимо подключиться к устройству");
       }
 
       sendCharacteristic.writeValue(new TextEncoder().encode(text));
+
+      addLog(text, "out");
+    } catch (err) {
+      addLog(`Error: ${err.message}`, "err");
+    }
+  },
+  sendGL: (arrUint8) => {
+    const {
+      characteristics: { sendCharacteristic },
+      device,
+      addLog,
+    } = get();
+    try {
+      // Return rejected promise immediately if data is empty.
+      if (!arrUint8.length) {
+        throw new Error("нельзя отправить пустые данные");
+      }
+
+      if (!device || !sendCharacteristic) {
+        throw new Error("необходимо подключиться к устройству");
+      }
+
+      sendCharacteristic.writeValue(arrUint8);
+
       addLog(text, "out");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");

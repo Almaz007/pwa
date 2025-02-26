@@ -4,6 +4,7 @@ import { selector } from "../store/selectors";
 import { shallow } from "zustand/shallow";
 import GroupNode from "../components/GroupNode/GroupNode";
 import { useCallback, useMemo } from "react";
+import { useBleState } from "../../Terminal/store/store";
 
 import {
   formatArray,
@@ -16,6 +17,19 @@ import {
 import { instructions } from "../store/arrInstructions";
 
 const useLogcalEditor = () => {
+  const {
+    connect: connectBle,
+    send: bleSend,
+    device,
+  } = useBleState(
+    (state) => ({
+      connect: state.connect,
+      send: state.sendGL,
+      device: state.device,
+    }),
+    shallow
+  );
+
   const {
     nodes,
     edges,
@@ -63,7 +77,18 @@ const useLogcalEditor = () => {
       await writableStreamClosed;
     };
 
-    return saveType === "files" ? saveFiles : saveUart;
+    const saveBle = (formattedScripts, formattedInstructionsBuffer) => {
+      const hexArray =
+        `${formattedScripts} ${formattedInstructionsBuffer}`.split(" ");
+      const byteArray = new Uint8Array(
+        hexArray.map((hex) => parseInt(hex, 16))
+      );
+      console.log(byteArray);
+      bleSend(`${formattedScripts}\n\r${formattedInstructionsBuffer}`);
+    };
+    const saveTypes = { files: saveFiles, uart: saveUart, ble: saveBle };
+
+    return saveTypes[saveType];
   }, [saveType, port]);
 
   const isValidConnection = (connection) => {
@@ -349,6 +374,8 @@ const useLogcalEditor = () => {
     changeSaveType,
     connectBluetooth,
     port,
+    connectBle,
+    device,
   };
 };
 

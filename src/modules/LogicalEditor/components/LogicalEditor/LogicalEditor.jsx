@@ -33,6 +33,8 @@ function LogicalEditorContent() {
     changeSaveType,
     connectBluetooth,
     port,
+    connectBle,
+    device,
   } = useLogcalEditor();
   const { cut, copy, paste, bufferedNodes } = useCopyPaste();
   const canCopy = nodes.some(({ selected }) => selected);
@@ -73,7 +75,7 @@ function LogicalEditorContent() {
             handleChange={(e) => changeProcessorType(e.target.value)}
           />
           <CustomSelect
-            values={["uart", "files"]}
+            values={["uart", "files", "ble"]}
             label={"save type"}
             value={saveType}
             handleChange={(e) => changeSaveType(e.target.value)}
@@ -92,6 +94,25 @@ function LogicalEditorContent() {
                 onClick={saveConfig}
                 sx={{ minWidth: 90 }}
                 disabled={!port}
+              >
+                save
+              </Button>
+            </>
+          )}
+          {saveType === "ble" && (
+            <>
+              <Button
+                variant="contained"
+                sx={{ minWidth: 90 }}
+                onClick={connectBle}
+              >
+                connect
+              </Button>
+              <Button
+                variant="contained"
+                onClick={saveConfig}
+                sx={{ minWidth: 90 }}
+                disabled={!device}
               >
                 save
               </Button>

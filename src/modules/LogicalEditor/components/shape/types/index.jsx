@@ -60,6 +60,12 @@ import { SubFloatView } from "./math/subFloat/SubFloatView";
 
 import { Dtrigger } from "./logic/Dtigger/Dtrigger";
 import { DtriggerView } from "./logic/Dtigger/DtriggerView";
+import { TimerInt } from "./timerInt/TimerInt";
+import { TimerIntView } from "./timerInt/TimerIntView";
+import { ConstInt } from "./constants/ConstInt/ConstInt";
+import { ConstIntView } from "./constants/ConstInt/ConstIntView";
+import { ConstBoolean } from "./constants/ConstBoolean/ConstBoolean";
+import { ConstBooleanView } from "./constants/ConstBoolean/ConstBooleanView";
 
 export const ShapeComponents = {
   inputInt: {
@@ -157,6 +163,18 @@ export const ShapeComponents = {
   lessFloat: {
     all: LessFloat,
     view: LessFloatView,
+  },
+  timerInt: {
+    all: TimerInt,
+    view: TimerIntView,
+  },
+  сonstInt: {
+    all: ConstInt,
+    view: ConstIntView,
+  },
+  constBoolean: {
+    all: ConstBoolean,
+    view: ConstBooleanView,
   },
   dtrigger: {
     all: Dtrigger,

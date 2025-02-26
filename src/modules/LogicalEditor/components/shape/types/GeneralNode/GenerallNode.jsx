@@ -1,11 +1,11 @@
 import { Position, useReactFlow, Handle } from "@xyflow/react";
-import CustomHandle from "../../../../CustomHandle/CustomHandle";
+import CustomHandle from "../../../CustomHandle/CustomHandle";
 import styles from "./styles.module.css";
-import CustomNodeToolbar from "../../../../CustomNodeToolbar/CustomNodeToolbar";
-import { generateHandles } from "../../../../../helpers/helpers";
+import CustomNodeToolbar from "../../../CustomNodeToolbar/CustomNodeToolbar";
+import { generateHandles } from "../../../../helpers/helpers";
 import { useMemo } from "react";
 
-export const LogicalNode = ({
+export const GeneralNode = ({
   id,
   width,
   height,

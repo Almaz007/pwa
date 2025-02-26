@@ -2,7 +2,7 @@ const lines = {
   Int: {
     first: <polygon points="20,31 24,27  28,31 24,35" fill="black" />,
     second: <polygon points="20,94 24,90 28,94 24,98" fill="black" />,
-    third: <polygon points="131,63 136,59 140,63 136,67" fill="black" />,
+    third: <polygon points="131,63 135,59 139,63 135,67" fill="black" />,
   },
   Float: {
     first: <polygon points="23,26 23,36 28,31" fill="black" />,
@@ -56,7 +56,7 @@ export const OperationView = ({
         {text}
       </text>
 
-      <line x1="111.799" y1="63" x2="140" y2="63" />
+      <line x1="111.799" y1="63" x2="138" y2="63" />
       {lines[dataType].third}
     </svg>
   );

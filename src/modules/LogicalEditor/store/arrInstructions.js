@@ -3957,8 +3957,8 @@ const instructionsRISCV = {
     instructions: {
       2: {
         instruction: [
-          "0x82",
-          "0x80",
+          "0x22",
+          "0x0C",
           "0x9C",
           "0x41",
           "0x18",
@@ -3981,16 +3981,16 @@ const instructionsRISCV = {
     instructions: {
       2: {
         instruction: [
-          "0x82",
-          "0x80",
-          "0x9c",
+          "0x22",
+          "0x0C",
+          "0x9C",
           "0x41",
           "0x18",
           "0x42",
           "0x99",
-          "0x8f",
-          "0x1c",
-          "0xc1",
+          "0x8F",
+          "0x1C",
+          "0xC1",
           "0x82",
           "0x80",
         ],
@@ -4003,8 +4003,8 @@ const instructionsRISCV = {
     instructions: {
       2: {
         instruction: [
-          "0x82",
-          "0x80",
+          "0x22",
+          "0x0C",
           "0x9C",
           "0x41",
           "0x18",
@@ -4181,8 +4181,8 @@ const instructionsRISCV = {
     instructions: {
       1: {
         instruction: [
-          "0x82",
-          "0x80",
+          "0x22",
+          "0x0C",
           "0x83",
           "0xC7",
           "0x05",
@@ -5644,45 +5644,51 @@ const instructionsRISCV = {
     },
   },
 
-  // сonstRegInt: {
-  //   instruction: [
-  //     "0x22",
-  //     "0x0C",
-  //     "0x9C",
-  //     "0x41",
-  //     "0x1C",
-  //     "0xC1",
-  //     "0x82",
-  //     "0x80",
-  //   ],
-  //   lengthInBytes: 8,
-  // },
+  сonstInt: {
+    instruction: [
+      "0x22",
+      "0x0C",
+      "0x9C",
+      "0x41",
+      "0x1C",
+      "0xC1",
+      "0x82",
+      "0x80",
+    ],
+    lengthInBytes: 8,
+    in__type: 28,
+  },
 
-  // timerInt: {
-  //   instruction: [
-  //     "0x22",
-  //     0x0c,
-  //     0x1c,
-  //     0x41,
-  //     0x85,
-  //     0x07,
-  //     0x1c,
-  //     0xc1,
-  //     0x98,
-  //     0x41,
-  //     0x63,
-  //     0x54,
-  //     0xf7,
-  //     0x00,
-  //     0x23,
-  //     0x20,
-  //     0x05,
-  //     0x00,
-  //     0x82,
-  //     0x80,
-  //   ],
-  //   lengthInBytes: 20,
-  // },
+  timerInt: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0c",
+          "0x1c",
+          "0x41",
+          "0x85",
+          "0x07",
+          "0x1c",
+          "0xc1",
+          "0x98",
+          "0x41",
+          "0x63",
+          "0x54",
+          "0xf7",
+          "0x00",
+          "0x23",
+          "0x20",
+          "0x05",
+          "0x00",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 20,
+        in__type: 27,
+      },
+    },
+  },
 };
 
 export const instructions = {

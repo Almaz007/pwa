@@ -113,6 +113,18 @@ export const meassuredsNodesByType = {
     width: 140,
     height: 165,
   },
+  timerInt: {
+    width: 113,
+    height: 125,
+  },
+  сonstInt: {
+    width: 113,
+    height: 125,
+  },
+  constBoolean: {
+    width: 113,
+    height: 125,
+  },
   dtrigger: {
     width: 140,
     height: 125,
