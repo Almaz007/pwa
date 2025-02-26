@@ -8,8 +8,8 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   logs: [],
   uuids: {
     serviceUuid: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-    sendCharacteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
-    receiveCharacteristicUuid: "1c364265-2a7f-4444-9b31-45748e778766",
+    sendCharacteristicUuid: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
+    receiveCharacteristicUuid: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
   },
   batteryValue: "100",
   options: {
