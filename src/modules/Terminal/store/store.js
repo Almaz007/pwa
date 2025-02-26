@@ -49,11 +49,19 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   clearLogs() {
     set({ logs: [] });
   },
+
   boundHandleCharacteristicValueChanged: (event) => {
     const { addLog } = get();
-    const value = new TextDecoder().decode(event.target.value);
-    set({ batteryValue: value });
-    addLog(value, "in");
+
+    const int32Array = new Int32Array(event.target.value.buffer); // Создаем Int32Array из ArrayBuffer
+    // Получаем значение из Int32Array
+    const value1 = int32Array[0];
+    // Преобразуем значение в строку
+    const stringValue = value1.toString();
+
+    //const value = new TextDecoder().decode(event.target.value, );
+    set({ batteryValue: stringValue });
+    addLog(stringValue, "in");
   },
   boundHandleDisconnection: () => {
     const { device, addLog, connectDeviceAndCacheCharacteristic } = get();
