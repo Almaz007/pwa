@@ -121,7 +121,7 @@ const nodeConfigurations = {
     handlesCount: 3,
   },
   equalsInt: {
-    dataType: "int",
+    dataType: "bool",
     type: "equalsInt",
     operationType: "equals",
     handlesCount: 2,
@@ -133,7 +133,7 @@ const nodeConfigurations = {
     handlesCount: 2,
   },
   lessInt: {
-    dataType: "int",
+    dataType: "bool",
     type: "lessInt",
     operationType: "less",
     handlesCount: 2,
@@ -145,7 +145,7 @@ const nodeConfigurations = {
     handlesCount: 2,
   },
   moreInt: {
-    dataType: "int",
+    dataType: "bool",
     type: "moreInt",
     operationType: "more",
     handlesCount: 2,
@@ -345,15 +345,20 @@ export const formatUstavki = () => {
     " "
   )} ${ustavkiValues.join(" ")}`;
 };
+
 export function splitIntToBytes(number) {
   const byteArray = new Uint8Array(4); // Создаем массив для 4 байтов
 
-  // Извлечение байтов по порядку: старшие сначала
-  byteArray[0] = (number >> 24) & 0xff; // Старший байт
-  byteArray[1] = (number >> 16) & 0xff; // Второй байт
-  byteArray[2] = (number >> 8) & 0xff; // Третий байт
-  byteArray[3] = number & 0xff; // Младший байт
+  // // Извлечение байтов по порядку: старшие сначала
+  // byteArray[0] = (number >> 24) & 0xff; // Старший байт
+  // byteArray[1] = (number >> 16) & 0xff; // Второй байт
+  // byteArray[2] = (number >> 8) & 0xff; // Третий байт
+  // byteArray[3] = number & 0xff; // Младший байт
 
+  byteArray[3] = (number >> 24) & 0xff; // Старший байт
+  byteArray[2] = (number >> 16) & 0xff; // Второй байт
+  byteArray[1] = (number >> 8) & 0xff; // Третий байт
+  byteArray[0] = number & 0xff; // Младший байт
   return byteArray;
 }
 
