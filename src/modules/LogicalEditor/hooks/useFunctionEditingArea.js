@@ -101,12 +101,12 @@ export const useFunctionEditingArea = (id) => {
     );
   };
   const isValidConnection = (connection) => {
-    if (!checkTypes(connection)) {
-      enqueueSnackbar("типы элементов не соответсвуют друг другу", {
-        variant: "error",
-      });
-      return;
-    }
+    // if (!checkTypes(connection)) {
+    //   enqueueSnackbar("типы элементов не соответсвуют друг другу", {
+    //     variant: "error",
+    //   });
+    //   return;
+    // }
 
     const target = nodes.find((node) => node.id === connection.target);
 
