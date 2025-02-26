@@ -21,7 +21,7 @@ export const FunctionPanel = ({ saveChanges }) => {
     (state) => state.processorType,
     shallow
   );
-  console.log(processorType);
+  // console.log(processorType);
   const instructionsProcessor = instructions[processorType];
 
   return (

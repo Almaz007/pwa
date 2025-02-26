@@ -22,42 +22,21 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
       80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140,
     ],
   },
-  inputTypes: {
-    NO_USE: 0,
-    bool: {
-      1: 1,
-      2: 2,
-      3: 3,
-      4: 4,
-      5: 5,
-      6: 6,
-      7: 7,
-    },
-    int: {
-      2: 8,
-      3: 9,
-      4: 10,
-      5: 11,
-      6: 12,
-      7: 13,
-    },
-    float: {
-      2: 14,
-      3: 15,
-      4: 16,
-      5: 17,
-      6: 18,
-      7: 19,
-    },
-    dobule: {
-      2: 20,
-      3: 21,
-      4: 22,
-      5: 23,
-      6: 24,
-      7: 25,
-    },
-    TM1: 26,
+
+  ustavkiValues: [
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ],
+  ustavkiIndexs: {
+    bool: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    int: [16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76],
+    float: [
+      80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140,
+    ],
   },
 
   // typedef enum {
@@ -94,7 +73,14 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
   //   TM1=26
   // }types ;
   edgesNum: 1,
-
+  setUstavkiValues(newUstavkiValues) {
+    set({ ustavkiValues: newUstavkiValues });
+  },
+  setUstavki(newIndexs, dataType) {
+    set((prev) => ({
+      ustavkiIndexs: { ...prev.ustavkiIndexs, [dataType]: newIndexs },
+    }));
+  },
   setPort(port) {
     set({ port });
   },

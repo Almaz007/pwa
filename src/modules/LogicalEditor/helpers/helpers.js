@@ -47,6 +47,16 @@ const getOffset = (dataType) => {
   return resultOffset;
 };
 
+const getSourceOffsetUstavki = (dataType) => {
+  if (!dataType || dataType === "any") return;
+
+  const { ustavkiIndexs, setUstavki } = useLogicalEditorState.getState();
+  const indexs = [...ustavkiIndexs[dataType]];
+  const sourcesOffsets = [indexs.shift(), 0, 0, 0, 0, 0, 0];
+  setUstavki(indexs, dataType);
+
+  return sourcesOffsets;
+};
 const nodeConfigurations = {
   inputBool: { dataType: "bool", type: "inputBool" },
   inputUstavka: {
@@ -148,18 +158,21 @@ const nodeConfigurations = {
   },
   timerInt: {
     dataType: "int",
+    ustavka: true,
     type: "timerInt",
     operationType: "timer",
     handlesCount: 0,
   },
   сonstInt: {
     dataType: "int",
+    ustavka: true,
     type: "сonstInt",
     operationType: "none",
     handlesCount: 0,
   },
   constBoolean: {
     dataType: "bool",
+    ustavka: true,
     type: "constBoolean",
     operationType: "none",
     handlesCount: 0,
@@ -199,7 +212,13 @@ export const generateNode = (type, position, style) => {
     position,
     width: meassuredsNodesByType[type]?.width ?? 100,
     height: meassuredsNodesByType[type]?.height ?? 100,
-    data: { ...config, resultOffset: getOffset(config.dataType) },
+    data: {
+      ...config,
+      resultOffset: getOffset(config.dataType),
+      sourcesOffsets: !!config.ustavka
+        ? getSourceOffsetUstavki(config.dataType)
+        : undefined,
+    },
   };
 };
 
@@ -316,6 +335,27 @@ export const formatBuffer = (instructionsBuffer) => {
   let result = `10 80 02  0 0 0 ${sumBytes.toString(16)} ${instructions}`; //${offsets} crc32`
   return result;
 };
+
+export const formatUstavki = () => {
+  const { ustavkiValues } = useLogicalEditorState.getState();
+
+  const sumBytes = ustavkiValues.length;
+
+  return `10 80 03 0 ${splitIntToBytes(sumBytes).join(
+    " "
+  )} ${ustavkiValues.join(" ")}`;
+};
+export function splitIntToBytes(number) {
+  const byteArray = new Uint8Array(4); // Создаем массив для 4 байтов
+
+  // Извлечение байтов по порядку: старшие сначала
+  byteArray[0] = (number >> 24) & 0xff; // Старший байт
+  byteArray[1] = (number >> 16) & 0xff; // Второй байт
+  byteArray[2] = (number >> 8) & 0xff; // Третий байт
+  byteArray[3] = number & 0xff; // Младший байт
+
+  return byteArray;
+}
 
 export const sendBluetooth = async (buffer, scripts) => {
   const textEncoder = new TextEncoderStream();

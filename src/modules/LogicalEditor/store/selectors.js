@@ -12,6 +12,7 @@ export const selector = (store) => ({
   changeSaveType: store.changeSaveType,
   port: store.port,
   setPort: store.setPort,
+  ustavkiValues: store.ustavkiValues,
 });
 
 export const setPointMenuSelector = (store) => ({

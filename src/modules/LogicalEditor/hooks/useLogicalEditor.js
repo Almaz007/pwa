@@ -13,6 +13,7 @@ import {
   sortNodes,
   formatBuffer,
   downloadFile,
+  formatUstavki,
 } from "../helpers/helpers";
 import { instructions } from "../store/arrInstructions";
 
@@ -43,6 +44,7 @@ const useLogcalEditor = () => {
     changeSaveType,
     port,
     setPort,
+    ustavkiValues,
   } = useLogicalEditorState(selector, shallow);
   const {
     screenToFlowPosition,
@@ -77,14 +79,22 @@ const useLogcalEditor = () => {
       await writableStreamClosed;
     };
 
-    const saveBle = (formattedScripts, formattedInstructionsBuffer) => {
+    const saveBle = (
+      formattedScripts,
+      formattedInstructionsBuffer,
+      formattedUstavki
+    ) => {
       const hexArray =
-        `${formattedScripts} ${formattedInstructionsBuffer}`.split(" ");
+        `${formattedScripts} ${formattedInstructionsBuffer} ${formattedUstavki}`.split(
+          " "
+        );
+
+      console.log(hexArray);
       const byteArray = new Uint8Array(
         hexArray.map((hex) => parseInt(hex, 16))
       );
-      console.log(byteArray);
-      bleSend(`${formattedScripts}\n\r${formattedInstructionsBuffer}`);
+
+      bleSend(byteArray);
     };
     const saveTypes = { files: saveFiles, uart: saveUart, ble: saveBle };
 
@@ -197,9 +207,10 @@ const useLogcalEditor = () => {
       scriptItem["instruction"] =
         instructionsBuffer?.primitivesData[type]?.[handlesCount].offset;
       scriptItem["resultOffset"] = node?.data?.resultOffset;
-      scriptItem["sourcesOffsets"] = [0, 0, 0, 0, 0, 0, 0];
+      scriptItem["sourcesOffsets"] = node?.data?.sourcesOffsets || [
+        0, 0, 0, 0, 0, 0, 0,
+      ];
 
-      scriptItem["sourcesOffsets"];
       incomers.forEach((incomer, index) => {
         generateScript(incomer);
         scriptItem["sourcesOffsets"][index] = incomer.data.resultOffset;
@@ -231,12 +242,13 @@ const useLogcalEditor = () => {
       return result;
     });
 
-    console.log(resultScripts, instructionsBuffer);
+    console.log(resultScripts);
+    console.log(instructionsBuffer);
 
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
-
-    saveFunc(formattedScripts, formattedInstructionsBuffer);
+    const formattedUstavki = formatUstavki();
+    saveFunc(formattedScripts, formattedInstructionsBuffer, formattedUstavki);
   };
 
   const onDragOver = useCallback((event) => {
