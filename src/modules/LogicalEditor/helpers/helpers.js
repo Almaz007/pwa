@@ -316,9 +316,9 @@ export const downloadFile = (fileData, fileName, mimeType) => {
 export const formatArray = (inputArray, instructionsBuffer) => {
   const sumBytes = inputArray.reduce((acc, items) => acc + items.length, 0);
 
-  return `10 80 01 0 0 0 0 ${sumBytes.toString(16)} ${inputArray
+  return `16 128 1 0 ${splitIntToBytes(sumBytes).join(" ")} ${inputArray
     .map((innerArray) => {
-      return innerArray.map((item) => item.toString(16)).join(" ");
+      return innerArray.join(" ");
     })
     .join(" ")}`;
 };
@@ -326,13 +326,13 @@ export const formatArray = (inputArray, instructionsBuffer) => {
 export const formatBuffer = (instructionsBuffer) => {
   const sumBytes = instructionsBuffer.instructions.length;
   const instructions = instructionsBuffer.instructions
-    .map((item) => item.slice(2))
+    .map((item) => parseInt(item))
     .join(" ");
-  const offsets = instructionsBuffer.offsets
-    .map((item) => item.toString(16))
-    .join(" ");
+  const offsets = instructionsBuffer.offsets.map((item) => item).join(" ");
 
-  let result = `10 80 02  0 0 0 ${sumBytes.toString(16)} ${instructions}`; //${offsets} crc32`
+  let result = `16 128 2 0 ${splitIntToBytes(sumBytes).join(
+    " "
+  )} ${instructions}`; //${offsets} crc32`
   return result;
 };
 
@@ -341,7 +341,7 @@ export const formatUstavki = () => {
 
   const sumBytes = ustavkiValues.length;
 
-  return `10 80 03 0 ${splitIntToBytes(sumBytes).join(
+  return `16 128 3 0 ${splitIntToBytes(sumBytes).join(
     " "
   )} ${ustavkiValues.join(" ")}`;
 };

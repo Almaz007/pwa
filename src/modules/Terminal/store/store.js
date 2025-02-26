@@ -220,7 +220,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
 
       sendCharacteristic.writeValue(arrUint8);
 
-      addLog(text, "out");
+      // addLog(text, "out");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");
     }

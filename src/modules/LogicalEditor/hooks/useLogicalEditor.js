@@ -84,15 +84,20 @@ const useLogcalEditor = () => {
       formattedInstructionsBuffer,
       formattedUstavki
     ) => {
-      const hexArray =
+      console.log(formattedScripts);
+      console.log(formattedInstructionsBuffer);
+      console.log(formattedUstavki);
+      // const vvvbyteArray = new Uint8Array(
+      //   formattedScripts.split(" ").map((hex) => parseInt(hex, 16))
+      // );
+      // console.log(vvvbyteArray);
+      const resultArray =
         `${formattedScripts} ${formattedInstructionsBuffer} ${formattedUstavki}`.split(
           " "
         );
 
-      console.log(hexArray);
-      const byteArray = new Uint8Array(
-        hexArray.map((hex) => parseInt(hex, 16))
-      );
+      console.log(resultArray);
+      const byteArray = new Uint8Array(resultArray);
 
       bleSend(byteArray);
     };
