@@ -16,6 +16,7 @@ export const OperationView = ({
   height,
   dataType,
   text,
+  end,
   fill = "#fff",
   stroke = "#000",
   strokeWidth = 1,
@@ -57,7 +58,7 @@ export const OperationView = ({
       </text>
 
       <line x1="111.799" y1="63" x2="138" y2="63" />
-      {lines[dataType].third}
+      {end !== "bool" && lines[dataType].third}
     </svg>
   );
 };

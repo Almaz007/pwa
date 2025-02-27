@@ -35,7 +35,7 @@ export const Test = () => {
     <>
       <div className={styles["battery"]}>
         <LuBatteryCharging className={styles["battery__icon"]} />
-        <div className="battery__value">{batteryValue}</div>
+        <div className="battery__value">{batteryValue} мВТ</div>
       </div>
       <div className={styles["bulb__row"]}>
         {Object.entries(options)

@@ -4,6 +4,7 @@ import {
   Controls,
   ReactFlowProvider,
   ReactFlow,
+  ConnectionLineType,
 } from "@xyflow/react";
 import SelectedNodesToolbar from "../SelectedNodesToolbar/SelectedNodesToolbar.jsx";
 import styles from "./FunctionEditingArea.module.css";
@@ -13,7 +14,7 @@ import "@xyflow/react/dist/style.css";
 import { FunctionPanel } from "../FunctionPanel/FunctionPanel.jsx";
 
 const defaultEdgeOptions = {
-  // type: ConnectionLineType.SmoothStep,
+  type: ConnectionLineType.SmoothStep,
   animated: true,
   style: { strokeWidth: 2 },
 };
@@ -43,14 +44,14 @@ function FunctionEditingAreaContent({ id }) {
           onConnect={onConnect}
           nodeTypes={nodeTypes}
           edgeTypes={edgeTypes}
-          defaultEdgeOptions={defaultEdgeOptions}
           proOptions={proOptions}
           isValidConnection={isValidConnection}
           fitView
           onDragOver={onDragOver}
           onDrop={onDrop}
           onNodeDragStop={onNodeDragStop}
-          // connectionLineType={ConnectionLineType.SmoothStep}
+          defaultEdgeOptions={defaultEdgeOptions}
+          connectionLineType={ConnectionLineType.SmoothStep}
         >
           <SelectedNodesToolbar />
           <Background />
