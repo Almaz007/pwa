@@ -65,15 +65,26 @@ const useLogcalEditor = () => {
       downloadFile(formattedScripts, "scripts.txt", "text/plain");
       downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
     };
-    const saveUart = async (formattedScripts, formattedInstructionsBuffer) => {
+    // const saveUart = async (formattedScripts, formattedInstructionsBuffer) => {
+    //   const textEncoder = new TextEncoderStream();
+    //   const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+
+    //   const writer = textEncoder.writable.getWriter();
+
+    //   await writer.write(
+    //     `${formattedScripts}\n\r${formattedInstructionsBuffer}`
+    //   );
+
+    //   writer.close();
+    //   await writableStreamClosed;
+    // };
+    const saveUart = async (result) => {
       const textEncoder = new TextEncoderStream();
       const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
 
       const writer = textEncoder.writable.getWriter();
 
-      await writer.write(
-        `${formattedScripts}\n\r${formattedInstructionsBuffer}`
-      );
+      await writer.write(result);
 
       writer.close();
       await writableStreamClosed;
@@ -250,10 +261,19 @@ const useLogcalEditor = () => {
     console.log(resultScripts);
     console.log(instructionsBuffer);
 
-    const formattedScripts = formatArray(resultScripts, instructionsBuffer);
-    const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
-    const formattedUstavki = formatUstavki();
-    saveFunc(formattedScripts, formattedInstructionsBuffer, formattedUstavki);
+    const newObj = {
+      scripts: [...resultScripts],
+      functions: [...instructionsBuffer.instructions],
+      ustavki: [...ustavkiValues],
+    };
+    const result = JSON.stringify(newObj);
+
+    // const formattedScripts = formatArray(resultScripts, instructionsBuffer);
+    // const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
+    // const formattedUstavki = formatUstavki();
+
+    // saveFunc(formattedScripts, formattedInstructionsBuffer, formattedUstavki);
+    saveFunc(result);
   };
 
   const onDragOver = useCallback((event) => {

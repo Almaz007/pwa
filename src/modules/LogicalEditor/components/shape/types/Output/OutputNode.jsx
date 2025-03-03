@@ -6,19 +6,13 @@ export const OutputNode = ({ id, width, height, data }) => {
   const { updateNodeData } = useReactFlow();
 
   return (
-    <>
-      <Handle
-        type="target"
-        position={Position.Right}
-        style={{
-          left: "-5px",
-        }}
-      />
+    <div>
+      <Handle type="target" position={Position.Left} />
       <OutputNodeView
         width={width}
         height={height}
         // disabled={true}
       />
-    </>
+    </div>
   );
 };

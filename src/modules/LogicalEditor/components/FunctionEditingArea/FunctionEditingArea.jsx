@@ -50,8 +50,8 @@ function FunctionEditingAreaContent({ id }) {
           onDragOver={onDragOver}
           onDrop={onDrop}
           onNodeDragStop={onNodeDragStop}
-          defaultEdgeOptions={defaultEdgeOptions}
-          connectionLineType={ConnectionLineType.SmoothStep}
+          // defaultEdgeOptions={defaultEdgeOptions}
+          // connectionLineType={ConnectionLineType.SmoothStep}
         >
           <SelectedNodesToolbar />
           <Background />

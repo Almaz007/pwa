@@ -2,7 +2,11 @@ import { Position, useReactFlow, Handle } from "@xyflow/react";
 import CustomHandle from "../../../CustomHandle/CustomHandle";
 import styles from "./styles.module.css";
 import CustomNodeToolbar from "../../../CustomNodeToolbar/CustomNodeToolbar";
-import { generateHandles, splitIntToBytes } from "../../../../helpers/helpers";
+import {
+  combineBytesToInt,
+  generateHandles,
+  splitIntToBytes,
+} from "../../../../helpers/helpers";
 import { useMemo } from "react";
 import { useLogicalEditorState } from "../../../../store/store";
 import { useState } from "react";
@@ -17,14 +21,23 @@ export const GeneralNode = ({
   computeLogic,
   ViewComponent,
 }) => {
-  const index = data.sourcesOffsets[0];
-
   const { updateNodeData } = useReactFlow();
   const [ustavkiValues, setUstavkiValues] = useLogicalEditorState((state) => [
     state.ustavkiValues,
     state.setUstavkiValues,
   ]);
-  const [inputValue, setInputValue] = useState(ustavkiValues[index]);
+  const index = data.sourcesOffsets[0];
+  const value =
+    data.dataType === "int"
+      ? combineBytesToInt(
+          ustavkiValues.slice(
+            data.sourcesOffsets[0],
+            data.sourcesOffsets[0] + 4
+          )
+        )
+      : ustavkiValues[data.sourcesOffsets[0]];
+
+  const [inputValue, setInputValue] = useState(value);
 
   const dataType = data.dataType;
 

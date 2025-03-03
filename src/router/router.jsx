@@ -20,6 +20,8 @@ import {
 } from "../modules/LogicalEditor";
 import DeviceIndication from "../pages/deviceIndication/DeviceIndication";
 import { TestPage } from "../pages/test/Test";
+import { Ustavki } from "../modules/Ustavki/components/Ustavki/UIstavki";
+import { UstavkiPage } from "../pages/ustavki/UstavkiPage";
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +60,11 @@ export const router = createBrowserRouter([
         path: "deviceIndication",
         element: <DeviceIndication />,
       },
+      {
+        path: "ustavki",
+        element: <UstavkiPage />,
+      },
+
       {
         path: "setpoints",
         element: <Setpoints />,

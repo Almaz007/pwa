@@ -49,13 +49,14 @@ function LogicalEditorContent() {
     <div className={styles["logical__editor"]}>
       <div className={styles["configuration"]}></div>
       <ReactFlow
+        interactionMode="touch"
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={addEdge}
-        defaultEdgeOptions={defaultEdgeOptions}
-        connectionLineType={ConnectionLineType.SmoothStep}
+        // defaultEdgeOptions={defaultEdgeOptions}
+        // connectionLineType={ConnectionLineType.SmoothStep}
         // onDrop={onDrop}
         // onDragOver={onDragOver}
         nodeTypes={nodeTypes}

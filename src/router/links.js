@@ -5,6 +5,8 @@ import { FaChartColumn } from "react-icons/fa6";
 import { IoMdSettings } from "react-icons/io";
 import { MdPermDeviceInformation } from "react-icons/md";
 import { FaRegLightbulb } from "react-icons/fa";
+import { LuBrainCircuit } from "react-icons/lu";
+
 export const links = [
   {
     id: 1,
@@ -57,35 +59,41 @@ export const links = [
   },
   {
     id: 9,
-    path: "setpoints",
+    path: "ustavki",
     text: "Уставки",
     icon: FaExchangeAlt,
   },
   {
     id: 10,
+    path: "setpoints",
+    text: "Гибкая логика",
+    icon: LuBrainCircuit,
+  },
+  {
+    id: 11,
     path: "settings",
     text: "Настройки",
     icon: IoMdSettings,
     links: [
       {
-        id: 101,
+        id: 111,
         path: "settings/testing",
         text: "Тестирование",
       },
       {
-        id: 102,
+        id: 112,
         path: "settings/generalSettings",
         text: "Общие настройки",
       },
       {
-        id: 103,
+        id: 113,
         path: "settings/communicationSettings",
         text: "Настройки связи",
       },
     ],
   },
   {
-    id: 11,
+    id: 12,
     path: "deviceInfo",
     text: "О устройстве",
     icon: MdPermDeviceInformation,

@@ -1,0 +1,9 @@
+.ustavka__row {
+  display: flex;
+  gap: 10px;
+}
+
+.ustavka__name,
+.ustavka__value {
+  font-size: 30px;
+}

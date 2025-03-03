@@ -158,6 +158,7 @@ const nodeConfigurations = {
   },
   timerInt: {
     dataType: "int",
+    name: "timer",
     ustavka: true,
     type: "timerInt",
     operationType: "timer",
@@ -165,6 +166,7 @@ const nodeConfigurations = {
   },
   сonstInt: {
     dataType: "int",
+    name: "constant int",
     ustavka: true,
     type: "сonstInt",
     operationType: "none",
@@ -172,6 +174,7 @@ const nodeConfigurations = {
   },
   constBoolean: {
     dataType: "bool",
+    name: "constant bool",
     ustavka: true,
     type: "constBoolean",
     operationType: "none",
@@ -360,6 +363,19 @@ export function splitIntToBytes(number) {
   byteArray[1] = (number >> 8) & 0xff; // Третий байт
   byteArray[0] = number & 0xff; // Младший байт
   return byteArray;
+}
+export function combineBytesToInt(byteArray) {
+  console.log(byteArray);
+  if (byteArray.length !== 4) {
+    throw new Error("Массив должен содержать ровно 4 байта");
+  }
+
+  return (
+    (byteArray[3] << 24) | // Старший байт
+    (byteArray[2] << 16) | // Второй байт
+    (byteArray[1] << 8) | // Третий байт
+    byteArray[0] // Младший байт
+  );
 }
 
 export const sendBluetooth = async (buffer, scripts) => {
