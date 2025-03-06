@@ -10,9 +10,7 @@ import {
 import { useMemo } from "react";
 import { useLogicalEditorState } from "../../../../store/store";
 import { useState } from "react";
-import MultipleSelect from "../../../../../../components/UI/MultipleSelect/MultipleSelect";
-import { CustomSelect } from "../../../../../../components/UI/CustomSelect/CustomSelect";
-
+import { shallow } from "zustand/shallow";
 export const GeneralNode = ({
   id,
   width,
@@ -22,10 +20,10 @@ export const GeneralNode = ({
   ViewComponent,
 }) => {
   const { updateNodeData } = useReactFlow();
-  const [ustavkiValues, setUstavkiValues] = useLogicalEditorState((state) => [
-    state.ustavkiValues,
-    state.setUstavkiValues,
-  ]);
+  const [ustavkiValues, setUstavkiValues] = useLogicalEditorState(
+    (state) => [state.ustavkiValues, state.setUstavkiValues],
+    shallow
+  );
   const index = data.sourcesOffsets[0];
   const value =
     data.dataType === "int"
@@ -48,7 +46,7 @@ export const GeneralNode = ({
   const changeHandlesCount = (e) => {
     updateNodeData(id, { handlesCount: +e.target.value });
   };
-  console.log(ustavkiValues);
+
   const validate = (value) => {
     if (dataType === "int") {
       const regex = /^\d+$/;
@@ -99,7 +97,20 @@ export const GeneralNode = ({
         handlesCount={data.handlesCount}
       />
       <CustomNodeToolbar>
-        <input value={inputValue} onChange={changeUstavki} />
+        <div className={styles["id"]}>ID: {id}</div>
+        <input
+          className={styles["input"]}
+          value={inputValue}
+          onChange={changeUstavki}
+        />
+        {/* <TextField
+          id="filled-basic"
+          value={inputValue}
+          onChange={changeUstavki}
+          label="Filled"
+          variant="filled"
+        /> */}
+        {/* <TextField id="outlined-basic" label="Outlined" variant="outlined" /> */}
       </CustomNodeToolbar>
       <Handle
         type="source"

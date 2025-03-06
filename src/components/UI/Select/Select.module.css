@@ -1,0 +1,70 @@
+.custom-select {
+  position: relative;
+  width: 200px;
+}
+
+.select-wrapper {
+  border: 1px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+  background: white;
+  user-select: none;
+}
+
+.dropdown {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  display: none;
+  max-height: 150px; /* Ограничиваем высоту */
+  overflow-y: auto; /* Включаем скролл при переполнении */
+  scrollbar-width: thin; /* Для Firefox */
+  scrollbar-color: #5e63ff #f0f0f0;
+}
+
+/* Увеличиваем ширину скроллбара */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 12px; /* Ширина вертикального скроллбара */
+  height: 12px; /* Ширина горизонтального (если есть) */
+}
+
+/* Стиль трека (фона) */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #222; /* Цвет фона */
+  border-radius: 10px; /* Скругление */
+}
+
+/* Стиль самой полосы прокрутки */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #5e63ff; /* Цвет полосы */
+  border-radius: 10px; /* Закругление */
+  border: 3px solid #11121a; /* Делаем "внутреннюю" тень */
+}
+
+/* При наведении */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #787dff;
+}
+.dropdown.open {
+  display: block;
+}
+
+.option {
+  padding: 10px;
+  cursor: pointer;
+  transition: var(--tran-03);
+}
+
+.option:hover {
+  background: var(--primary-color);
+  color: white;
+}
+.option.selected {
+  background: var(--primary-color);
+  color: white;
+}
+
+.option.focused {
+  background: #dcdcff; /* Подсветка при навигации клавишами */
+}

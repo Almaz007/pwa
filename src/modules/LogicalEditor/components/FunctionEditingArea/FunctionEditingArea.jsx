@@ -32,7 +32,7 @@ function FunctionEditingAreaContent({ id }) {
     onConnect,
     saveChanges,
   } = useFunctionEditingArea(id);
-
+  console.log(nodes);
   return (
     <div className={styles["editing__area"]}>
       <div className={styles["flow"]}>

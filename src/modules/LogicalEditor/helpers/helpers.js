@@ -46,7 +46,17 @@ const getOffset = (dataType) => {
 
   return resultOffset;
 };
+const geiIndex = (dataType) => {
+  if (!dataType || dataType === "any") return;
 
+  const { ustavkiIndexs, setUstavki } = useLogicalEditorState.getState();
+
+  const indexs = [...ustavkiIndexs[dataType]];
+  const resultIndex = indexs.shift();
+  setUstavki(indexs, dataType);
+
+  return resultIndex;
+};
 const getSourceOffsetUstavki = (dataType) => {
   if (!dataType || dataType === "any") return;
 
@@ -58,15 +68,25 @@ const getSourceOffsetUstavki = (dataType) => {
   return sourcesOffsets;
 };
 const nodeConfigurations = {
-  inputBool: { dataType: "bool", type: "inputBool" },
-  inputUstavka: {
-    dataType: "boolean",
-    type: "inputUstavka",
-    value: false,
-    resultOffset: 0,
+  inputBool: {
+    dataType: "bool",
+    type: "inputBool",
+    ustavka: true,
+    handlesCount: 0,
   },
-  inputFloat: { dataType: "float", type: "inputFloat" },
-  inputInt: { dataType: "int", type: "inputInt" },
+
+  inputFloat: {
+    dataType: "float",
+    type: "inputFloat",
+    ustavka: true,
+    handlesCount: 0,
+  },
+  inputInt: {
+    dataType: "int",
+    type: "inputInt",
+    ustavka: true,
+    handlesCount: 0,
+  },
   xor: { dataType: "bool", type: "xor", handlesCount: 2 },
   and: { dataType: "bool", type: "and", handlesCount: 3 },
   or: { dataType: "bool", type: "or", handlesCount: 3 },
@@ -109,7 +129,24 @@ const nodeConfigurations = {
     operationType: "sub",
     handlesCount: 2,
   },
-  outputNode: { type: "outputNode", dataType: "any" },
+  outputInt: {
+    type: "outputInt",
+    dataType: "int",
+    ustavka: true,
+    handlesCount: 0,
+  },
+  outputBool: {
+    type: "outputBool",
+    dataType: "bool",
+    ustavka: true,
+    handlesCount: 0,
+  },
+  outputFloat: {
+    type: "outputFloat",
+    dataType: "float",
+    ustavka: true,
+    handlesCount: 0,
+  },
   muxBool: {
     dataType: "bool",
     type: "muxBool",
@@ -189,8 +226,12 @@ const nodeConfigurations = {
 };
 
 export const generateNode = (type, position, style) => {
-  const nanoid = customAlphabet("12345", 5);
-  const id = uuidv4();
+  // const id = uuidv4();
+  const alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const nanoid = customAlphabet(alphabet, 8); // Длина идентификатора равна 8
+
+  // Генерация уникального идентификатора
+  const id = nanoid();
   console.log(type);
   if (type === "groupNode") {
     const groupId = nanoid();
@@ -208,21 +249,30 @@ export const generateNode = (type, position, style) => {
   if (!config) {
     throw new Error(`Unknown node type: ${type}`);
   }
-
-  return {
-    id,
-    type: "shape",
-    position,
-    width: meassuredsNodesByType[type]?.width ?? 100,
-    height: meassuredsNodesByType[type]?.height ?? 100,
-    data: {
+  let data;
+  if (config.type.includes("output")) {
+    data = {
+      ...config,
+      resultOffset: geiIndex(config.dataType),
+    };
+  } else {
+    data = {
       ...config,
       resultOffset: getOffset(config.dataType),
       sourcesOffsets: !!config.ustavka
         ? getSourceOffsetUstavki(config.dataType)
         : undefined,
-    },
+    };
+  }
+  const resultNode = {
+    id,
+    type: "shape",
+    position,
+    width: meassuredsNodesByType[type]?.width ?? 100,
+    height: meassuredsNodesByType[type]?.height ?? 100,
+    data,
   };
+  return resultNode;
 };
 
 export const sortNodes = (a, b) => {

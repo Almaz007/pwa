@@ -65,7 +65,7 @@ export const links = [
   },
   {
     id: 10,
-    path: "setpoints",
+    path: "flexibleLogic",
     text: "Гибкая логика",
     icon: LuBrainCircuit,
   },

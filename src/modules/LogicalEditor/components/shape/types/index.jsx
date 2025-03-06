@@ -26,9 +26,6 @@ import { InputFloatView } from "./inputs/InpuFloat/InputFloatView";
 import { InputBool } from "./inputs/InputBool/InputBool";
 import { InputBoolView } from "./inputs/InputBool/InputBoolView";
 
-import { OutputNodeView } from "./Output/OutputNodeView";
-import { OutputNode } from "./Output/OutputNode";
-
 // import { InputUstavka } from "./inputs/Input/InputUstavka";
 import { MuxBool } from "./MuxBool/MuxBool";
 import { MuxBoolView } from "./MuxBool/MuxBoolView";
@@ -67,6 +64,13 @@ import { ConstIntView } from "./constants/ConstInt/ConstIntView";
 import { ConstBoolean } from "./constants/ConstBoolean/ConstBoolean";
 import { ConstBooleanView } from "./constants/ConstBoolean/ConstBooleanView";
 
+import { OutputBool } from "./outputs/outputBool/OutputBool";
+import { OutputBoolView } from "./outputs/outputBool/OutputBoolView";
+import { OutputFloat } from "./outputs/outputFloat/OutputFloat";
+import { OutputFloatView } from "./outputs/outputFloat/OutputFloatView";
+import { OutputInt } from "./outputs/outputInt/OutputInt";
+import { OutputIntView } from "./outputs/outputInt/OutputIntView";
+
 export const ShapeComponents = {
   inputInt: {
     all: InputInt,
@@ -79,6 +83,18 @@ export const ShapeComponents = {
   inputFloat: {
     all: InputFloat,
     view: InputFloatView,
+  },
+  outputInt: {
+    all: OutputInt,
+    view: OutputIntView,
+  },
+  outputBool: {
+    all: OutputBool,
+    view: OutputBoolView,
+  },
+  outputFloat: {
+    all: OutputFloat,
+    view: OutputFloatView,
   },
   xor: {
     all: Xor,
@@ -128,10 +144,7 @@ export const ShapeComponents = {
     all: SubFloat,
     view: SubFloatView,
   },
-  outputNode: {
-    all: OutputNode,
-    view: OutputNodeView,
-  },
+
   muxBool: {
     all: MuxBool,
     view: MuxBoolView,

@@ -1,9 +1,102 @@
 const instructionsARM = {
-  inputBool: {},
-  inputFloat: {},
-  inputInt: {},
-  outputNode: {},
-  // dtrigger: {},
+  inputBool: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0C",
+          "0x83",
+          "0xC7",
+          "0x05",
+          "0x00",
+          "0x23",
+          "0x00",
+          "0xF5",
+          "0x00",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 12,
+        in_type: 33,
+      },
+    },
+  },
+  // inputFloat: {
+  //   instructions: {
+  //     0: {
+  //       instruction: ["0x22", "0x0c", "0x82", "0x80"],
+  //       lengthInBytes: 8,
+  //       in_type: 35,
+  //     },
+  //   },
+  // },
+  inputInt: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0c",
+          "0x9c",
+          "0x41",
+          "0x1c",
+          "0xc1",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 8,
+        in_type: 34,
+      },
+    },
+  },
+  // outputFloat: {
+  //   instructions: {
+  //     0: {
+  //       instruction: ["0x22", "0x0c", "0x82", "0x80"],
+  //       lengthInBytes: 8,
+  //       in_type: 34,
+  //     },
+  //   },
+  // },
+  outputBool: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0C",
+          "0x83",
+          "0xC7",
+          "0x05",
+          "0x00",
+          "0x23",
+          "0x00",
+          "0xF5",
+          "0x00",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 12,
+        in_type: 30,
+      },
+    },
+  },
+  outputInt: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0c",
+          "0x9c",
+          "0x41",
+          "0x1c",
+          "0xc1",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 8,
+        in_type: 31,
+      },
+    },
+  },
   multInt: {
     instructions: {
       2: {
@@ -3948,10 +4041,104 @@ const instructionsARM = {
 };
 
 const instructionsRISCV = {
-  inputBool: {},
-  inputFloat: {},
-  inputInt: {},
-  outputNode: {},
+  inputBool: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0C",
+          "0x83",
+          "0xC7",
+          "0x05",
+          "0x00",
+          "0x23",
+          "0x00",
+          "0xF5",
+          "0x00",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 12,
+        in_type: 33,
+      },
+    },
+  },
+  // inputFloat: {
+  //   instructions: {
+  //     0: {
+  //       instruction: ["0x22", "0x0c", "0x82", "0x80"],
+  //       lengthInBytes: 8,
+  //       in_type: 35,
+  //     },
+  //   },
+  // },
+  inputInt: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0c",
+          "0x9c",
+          "0x41",
+          "0x1c",
+          "0xc1",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 8,
+        in_type: 34,
+      },
+    },
+  },
+  // outputFloat: {
+  //   instructions: {
+  //     0: {
+  //       instruction: ["0x22", "0x0c", "0x82", "0x80"],
+  //       lengthInBytes: 8,
+  //       in_type: 34,
+  //     },
+  //   },
+  // },
+  outputBool: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0C",
+          "0x83",
+          "0xC7",
+          "0x05",
+          "0x00",
+          "0x23",
+          "0x00",
+          "0xF5",
+          "0x00",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 12,
+        in_type: 30,
+      },
+    },
+  },
+  outputInt: {
+    instructions: {
+      0: {
+        instruction: [
+          "0x22",
+          "0x0c",
+          "0x9c",
+          "0x41",
+          "0x1c",
+          "0xc1",
+          "0x82",
+          "0x80",
+        ],
+        lengthInBytes: 8,
+        in_type: 31,
+      },
+    },
+  },
   // dtrigger: {},
   multInt: {
     instructions: {
@@ -5720,12 +5907,4 @@ const instructionsRISCV = {
 export const instructions = {
   ARM: instructionsARM,
   RISCV: instructionsRISCV,
-};
-
-export const offsets = {
-  boolOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-  intOffsets: [16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76],
-  floatOffsets: [
-    80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140,
-  ],
 };

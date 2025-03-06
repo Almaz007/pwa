@@ -27,7 +27,10 @@ export const FunctionPanel = ({ saveChanges }) => {
   return (
     <Panel className={styles["panel"]}>
       <div className={styles["panel__row"]}>
-        <Link to={"/setpoints/logicalEditor"} className={styles["back__link"]}>
+        <Link
+          to={"/flexibleLogic/logicalEditor"}
+          className={styles["back__link"]}
+        >
           <StyledButton startIcon={<IoMdArrowBack />} variant="text">
             на главную
           </StyledButton>

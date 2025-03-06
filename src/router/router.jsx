@@ -12,7 +12,7 @@ import GeneralSettings from "../pages/settings/generalSettings/GeneralSettings";
 import CommunicationSettings from "../pages/settings/CommunicationSettings/components/CommunicationSettings/CommunicationSettings";
 
 import Monitoring from "../pages/monitoring/Monitoring";
-import Setpoints from "../pages/setpoints/Setpoints";
+import FlexibleLogicPage from "../pages/flexibleLogic/FlexibleLogicPage";
 import {
   FunctionEditingArea,
   LogicalEditor,
@@ -22,7 +22,6 @@ import DeviceIndication from "../pages/deviceIndication/DeviceIndication";
 import { TestPage } from "../pages/test/Test";
 import { Ustavki } from "../modules/Ustavki/components/Ustavki/UIstavki";
 import { UstavkiPage } from "../pages/ustavki/UstavkiPage";
-
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -66,8 +65,8 @@ export const router = createBrowserRouter([
       },
 
       {
-        path: "setpoints",
-        element: <Setpoints />,
+        path: "flexibleLogic",
+        element: <LogicalEditorLayout />,
         children: [
           {
             index: true,

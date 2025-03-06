@@ -1,0 +1,11 @@
+.panel {
+  margin: 0;
+}
+
+.panel__row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  background-color: #fff;
+  padding-left: 40px;
+}

@@ -17,15 +17,23 @@ export const meassuredsNodesByType = {
     width: 210,
     height: 25,
   },
-  // inputUstavka: {
-  //   width: 210,
-  //   height: 25,
-  // },
   inputFloat: {
     width: 210,
     height: 25,
   },
   inputInt: {
+    width: 210,
+    height: 25,
+  },
+  outputBool: {
+    width: 210,
+    height: 25,
+  },
+  outputFloat: {
+    width: 210,
+    height: 25,
+  },
+  outputInt: {
     width: 210,
     height: 25,
   },

@@ -1,0 +1,26 @@
+.input__node {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  background-color: #fff;
+}
+
+.internal__signal {
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.input {
+  text-align: center;
+  border: 1px solid black;
+  border-left: 0px;
+}
+.line {
+  height: 1px;
+  background-color: #000;
+}

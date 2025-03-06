@@ -6,7 +6,6 @@ import {
 import { createWithEqualityFn } from "zustand/traditional";
 import { v4 as uuidv4 } from "uuid";
 import { sortNodes } from "../helpers/helpers";
-import { offsets } from "./arrInstructions";
 
 export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
   nodes: [],
@@ -126,7 +125,6 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
       id,
       ...data,
       animated: true,
-      type: ConnectionLineType.SmoothStep,
     };
 
     set({ edges: [edge, ...get().edges] });
@@ -141,6 +139,16 @@ export const useLogicalEditorState = createWithEqualityFn((set, get) => ({
     set({
       nodes: [...nodes],
     });
+  },
+  updateNodes(id, { ...props }) {
+    console.log(props);
+    const { nodes } = get();
+
+    const node = nodes.find((node) => node.id === id);
+    const newNodes = [...nodes].filter((node) => node.id !== id);
+    newNodes.push({ ...node, data: { ...node.data, ...props } });
+    console.log(newNodes);
+    set({ nodes: [...newNodes] });
   },
   setEdges(edges) {
     set({
