@@ -23,38 +23,26 @@ export const Output = ({ id, width, height, data, ViewComponent }) => {
     );
 
   const options = useMemo(() => {
-    return ustavkiIndexs[dataType];
+    return ustavkiIndexs["int"];
   }, [ustavkiIndexs]);
 
   const updateUstavkiIndexs = (newOffset) => {
-    const indexs = [...ustavkiIndexs[dataType]].filter(
+    const indexs = [...ustavkiIndexs["int"]].filter(
       (offset) => offset !== newOffset
     );
+
     indexs.push(resultOffset);
-    setUstavki(indexs, dataType);
+    setUstavki(indexs, "int");
 
     updateNodeData(id, { resultOffset: newOffset });
 
-    if (dataType === "int") {
-      const bytes = [...ustavkiValues.slice(resultOffset, resultOffset + 4)];
+    const bytes = [...ustavkiValues.slice(resultOffset, resultOffset + 4)];
 
-      const newUstavkiValues = [...ustavkiValues];
-      newUstavkiValues.splice(resultOffset, 4, 0, 0, 0, 0);
-      newUstavkiValues.splice(newOffset, 4, ...bytes);
+    const newUstavkiValues = [...ustavkiValues];
+    newUstavkiValues.splice(resultOffset, 4, 0, 0, 0, 0);
+    newUstavkiValues.splice(newOffset, 4, ...bytes);
 
-      setUstavkiValues([...newUstavkiValues]);
-    }
-    if (data.dataType === "bool") {
-      const value = ustavkiValues[resultOffset];
-
-      updateNodeData(id, { resultOffset: newOffset });
-
-      const newUstavkiValues = [...ustavkiValues];
-      newUstavkiValues.splice(resultOffset, 1, 0);
-      newUstavkiValues.splice(newOffset, 1, value);
-
-      setUstavkiValues([...newUstavkiValues]);
-    }
+    setUstavkiValues([...newUstavkiValues]);
   };
 
   return (

@@ -28,7 +28,6 @@ export const Ustavki = () => {
     ],
     shallow
   );
-  console.log(ustavkiValues);
   const ustavki = useMemo(() => {
     return nodes
       .filter((node) => node.data.ustavka)
@@ -36,35 +35,28 @@ export const Ustavki = () => {
         const nodeUstavka = node.data;
 
         if (nodeUstavka.type.includes("output")) {
-          if (nodeUstavka.dataType === "int") {
-            const value = combineBytesToInt([
-              ...ustavkiValues.slice(
-                nodeUstavka.resultOffset,
-                nodeUstavka.resultOffset + 4
-              ),
-            ]);
+          const value = combineBytesToInt([
+            ...ustavkiValues.slice(
+              nodeUstavka.resultOffset,
+              nodeUstavka.resultOffset + 4
+            ),
+          ]);
 
-            return { id: node.id, ...nodeUstavka, value };
-          }
-          if (nodeUstavka.dataType === "bool") {
-            const value = ustavkiValues[nodeUstavka.resultOffset];
-            return { id: node.id, ...nodeUstavka, value };
-          }
-        } else {
-          if (nodeUstavka.dataType === "int") {
-            const value = combineBytesToInt([
-              ...ustavkiValues.slice(
-                nodeUstavka.sourcesOffsets[0],
-                nodeUstavka.sourcesOffsets[0] + 4
-              ),
-            ]);
+          return { id: node.id, ...nodeUstavka, value };
+        }
+        if (nodeUstavka.dataType === "int") {
+          const value = combineBytesToInt([
+            ...ustavkiValues.slice(
+              nodeUstavka.sourcesOffsets[0],
+              nodeUstavka.sourcesOffsets[0] + 4
+            ),
+          ]);
 
-            return { id: node.id, ...nodeUstavka, value };
-          }
-          if (nodeUstavka.dataType === "bool") {
-            const value = ustavkiValues[nodeUstavka.sourcesOffsets[0]];
-            return { id: node.id, ...nodeUstavka, value };
-          }
+          return { id: node.id, ...nodeUstavka, value };
+        }
+        if (nodeUstavka.dataType === "bool") {
+          const value = ustavkiValues[nodeUstavka.sourcesOffsets[0]];
+          return { id: node.id, ...nodeUstavka, value };
         }
       });
   }, [nodes, ustavkiValues]);

@@ -21,6 +21,14 @@ export const columns = (
         const ustavka = params.row;
         const out = ustavka.type.includes("output");
 
+        if (ustavka.type.includes("output")) {
+          return (
+            <input
+              value={ustavka.value}
+              onChange={(event) => handleChangeInt(ustavka.resultOffset, event)}
+            />
+          );
+        }
         if (ustavka.dataType === "bool") {
           return (
             <CustomSelect

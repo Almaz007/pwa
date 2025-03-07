@@ -51,9 +51,9 @@ const geiIndex = (dataType) => {
 
   const { ustavkiIndexs, setUstavki } = useLogicalEditorState.getState();
 
-  const indexs = [...ustavkiIndexs[dataType]];
+  const indexs = [...ustavkiIndexs["int"]];
   const resultIndex = indexs.shift();
-  setUstavki(indexs, dataType);
+  setUstavki(indexs, "int");
 
   return resultIndex;
 };
@@ -415,7 +415,6 @@ export function splitIntToBytes(number) {
   return byteArray;
 }
 export function combineBytesToInt(byteArray) {
-  console.log(byteArray);
   if (byteArray.length !== 4) {
     throw new Error("Массив должен содержать ровно 4 байта");
   }
