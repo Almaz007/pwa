@@ -28,6 +28,7 @@ export const Ustavki = () => {
     ],
     shallow
   );
+  console.log(ustavkiValues);
   const ustavki = useMemo(() => {
     return nodes
       .filter((node) => node.data.ustavka)

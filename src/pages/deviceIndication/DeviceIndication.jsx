@@ -1,10 +1,12 @@
 import { DataGrid } from "@mui/x-data-grid";
 import TabeLayout from "../../components/tableLayout/TableLayout";
-import { rows as initialRows, columns } from "./mockData/mockData";
+// import { rows as initialRows, columns } from "./mockData/mockData";
+
 import { useState } from "react";
+import { Indication } from "../../modules/Indication";
 
 const DeviceIndication = () => {
-  const [rows, setRows] = useState(initialRows);
+  // const [rows, setRows] = useState(initialRows);
 
   const handleChange = (id, event) => {
     const {
@@ -37,22 +39,7 @@ const DeviceIndication = () => {
     return newRow;
   };
 
-  return (
-    <div>
-      <TabeLayout text={"Модуль индикации"}>
-        <DataGrid
-          getRowHeight={() => 70}
-          hideFooter
-          pageSize={false}
-          rows={rows}
-          columns={columns(handleChange, handleCheckboxChange)}
-          processRowUpdate={handleProcessRowUpdate} // Сохранение изменений
-          experimentalFeatures={{ newEditingApi: true }} // Включение нового API редактирования
-          disableSelectionOnClick
-        />
-      </TabeLayout>
-    </div>
-  );
+  return <Indication />;
 };
 
 export default DeviceIndication;

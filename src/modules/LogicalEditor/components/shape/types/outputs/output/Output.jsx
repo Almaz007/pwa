@@ -8,7 +8,7 @@ import styles from "./Output.module.css";
 import { Select } from "../../../../../../../components/UI/Select/Select";
 
 export const Output = ({ id, width, height, data, ViewComponent }) => {
-  const { resultOffset, dataType } = data;
+  const { resultOffset, dataType, name } = data;
   const { updateNodeData } = useReactFlow();
 
   const [ustavkiValues, setUstavkiValues, ustavkiIndexs, setUstavki] =
@@ -44,6 +44,9 @@ export const Output = ({ id, width, height, data, ViewComponent }) => {
 
     setUstavkiValues([...newUstavkiValues]);
   };
+  const updateName = (e) => {
+    updateNodeData(id, { name: e.target.value });
+  };
 
   return (
     <>
@@ -56,12 +59,19 @@ export const Output = ({ id, width, height, data, ViewComponent }) => {
       />
       <CustomNodeToolbar>
         <div className={styles["id"]}>ID: {id}</div>
+        <div>
+          <label className={styles["label"]}>name:</label>
+          <input
+            className={styles["input"]}
+            value={name}
+            onChange={updateName}
+          />
+        </div>
         <Select
           options={options}
           value={resultOffset}
           onChange={updateUstavkiIndexs}
-          label="test"
-          placeholder="test"
+          label="смещение"
         />
       </CustomNodeToolbar>
       <ViewComponent width={width} height={height} />

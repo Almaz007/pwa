@@ -8,6 +8,7 @@ import { customAlphabet } from "nanoid";
 import { meassuredsNodesByType } from "../constants/constants";
 import { v4 as uuidv4 } from "uuid";
 import { useLogicalEditorState } from "../store/store";
+import { useIndicationsState } from "../../Indication";
 
 export const getNodePositionInsideParent = (node, groupNode) => {
   const position = node.position ?? { x: 0, y: 0 };
@@ -130,18 +131,21 @@ const nodeConfigurations = {
     handlesCount: 2,
   },
   outputInt: {
+    name: "",
     type: "outputInt",
     dataType: "int",
     ustavka: true,
     handlesCount: 0,
   },
   outputBool: {
+    name: "",
     type: "outputBool",
     dataType: "bool",
     ustavka: true,
     handlesCount: 0,
   },
   outputFloat: {
+    name: "",
     type: "outputFloat",
     dataType: "float",
     ustavka: true,
@@ -397,6 +401,26 @@ export const formatUstavki = () => {
   return `16 128 3 0 ${splitIntToBytes(sumBytes).join(
     " "
   )} ${ustavkiValues.join(" ")}`;
+};
+
+export const formatIndications = () => {
+  const { indications } = useIndicationsState.getState();
+
+  const temp = Object.entries(indications).map((indication) => {
+    const { id, name, ...res } = indication[1];
+    return res;
+  });
+  const sumBytes = temp.reduce(
+    (acc, obj) => (acc += Object.keys(obj).length),
+    0
+  );
+  const indicationValues = temp.reduce((acc, indication) => {
+    acc.push(...Object.values(indication));
+    return acc;
+  }, []);
+  return `16 128 4 0 ${splitIntToBytes(sumBytes).join(
+    " "
+  )} ${indicationValues.join(" ")}`;
 };
 
 export function splitIntToBytes(number) {

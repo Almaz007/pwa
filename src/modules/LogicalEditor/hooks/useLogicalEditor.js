@@ -14,6 +14,7 @@ import {
   formatBuffer,
   downloadFile,
   formatUstavki,
+  formatIndications,
 } from "../helpers/helpers";
 import { instructions } from "../store/arrInstructions";
 
@@ -54,8 +55,7 @@ const useLogcalEditor = () => {
     getEdges,
     setNodes,
   } = useReactFlow();
-  console.log(nodes);
-  console.log(edges);
+
   const instructionsData = instructions[processorType];
 
   const nodeTypes = {
@@ -66,19 +66,26 @@ const useLogcalEditor = () => {
     const saveFiles = (
       formattedScripts,
       formattedInstructionsBuffer,
-      formattedUstavki
+      formattedUstavki,
+      formattedIndications
     ) => {
+      console.log(formattedScripts);
+      console.log(formattedInstructionsBuffer);
+      console.log(formattedUstavki);
+
       downloadFile(formattedScripts, "scripts.txt", "text/plain");
       downloadFile(formattedInstructionsBuffer, "buffer.txt", "text/plain");
       downloadFile(formattedUstavki, "ustavki.txt", "text/plain");
+      downloadFile(formattedIndications, "indications.txt", "text/plain");
     };
 
     const saveUart = async (
       formattedScripts,
       formattedInstructionsBuffer,
-      formattedUstavki
+      formattedUstavki,
+      formattedIndications
     ) => {
-      const result = `${formattedScripts} ${formattedInstructionsBuffer} ${formattedUstavki}`;
+      const result = `${formattedScripts} ${formattedInstructionsBuffer} ${formattedUstavki} ${formattedIndications}`;
       const textEncoder = new TextEncoderStream();
       const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
 
@@ -93,16 +100,26 @@ const useLogcalEditor = () => {
     const saveBle = (
       formattedScripts,
       formattedInstructionsBuffer,
-      formattedUstavki
+      formattedUstavki,
+      formattedIndications
     ) => {
-      const resultArray =
-        `${formattedScripts} ${formattedInstructionsBuffer} ${formattedUstavki}`.split(
-          " "
-        );
+      const resultArray1 =
+        `${formattedScripts} ${formattedInstructionsBuffer}`.split(" ");
+      const resultArray2 = formattedUstavki.split(" ");
+      const resultArray3 = formattedIndications.split(" ");
 
-      const byteArray = new Uint8Array(resultArray);
-
-      bleSend(byteArray);
+      setTimeout(() => {
+        const byteArray = new Uint8Array(resultArray1);
+        bleSend(byteArray);
+      }, 0);
+      setTimeout(() => {
+        const byteArray = new Uint8Array(resultArray2);
+        bleSend(byteArray);
+      }, 1000);
+      setTimeout(() => {
+        const byteArray = new Uint8Array(resultArray3);
+        bleSend(byteArray);
+      }, 2000);
     };
     const saveTypes = { files: saveFiles, uart: saveUart, ble: saveBle };
 
@@ -157,6 +174,22 @@ const useLogcalEditor = () => {
     };
   };
 
+  function getDuplicatedIncomers(node, nodes, edges) {
+    const incomers = getIncomers(node, nodes, edges);
+
+    // Подсчитываем количество входящих соединений
+    const edgeCounts = edges.reduce((acc, edge) => {
+      if (edge.target === node.id) {
+        acc[edge.source] = (acc[edge.source] || 0) + 1;
+      }
+      return acc;
+    }, {});
+
+    // Дублируем узлы в соответствии с количеством входящих соединений
+    return incomers.flatMap((incomer) =>
+      Array(edgeCounts[incomer.id]).fill(incomer)
+    );
+  }
   const saveConfig = async () => {
     const scripts = [];
     const visited = new Set();
@@ -210,7 +243,8 @@ const useLogcalEditor = () => {
         instructionsBuffer.lastLength = lastLength;
       }
 
-      const incomers = getIncomers(node, nodes, edges);
+      const incomers = getDuplicatedIncomers(node, nodes, edges);
+
       const scriptItem = {};
       scriptItem["in_type"] =
         instructionsData[type].instructions[handlesCount].in_type;
@@ -249,21 +283,27 @@ const useLogcalEditor = () => {
       return result;
     });
 
-    console.log(resultScripts);
-    console.log(instructionsBuffer);
+    // console.log(resultScripts);
+    // console.log(instructionsBuffer);
 
-    const newObj = {
-      scripts: [...resultScripts],
-      functions: [...instructionsBuffer.instructions],
-      ustavki: [...ustavkiValues],
-    };
-    const result = JSON.stringify(newObj);
-
+    // const newObj = {
+    //   scripts: [...resultScripts],
+    //   functions: [...instructionsBuffer.instructions],
+    //   ustavki: [...ustavkiValues],
+    // };
+    // const result = JSON.stringify(newObj);
+    // console.log(newObj);
     const formattedScripts = formatArray(resultScripts, instructionsBuffer);
     const formattedInstructionsBuffer = formatBuffer(instructionsBuffer);
     const formattedUstavki = formatUstavki();
+    const formattedIndications = formatIndications();
 
-    saveFunc(formattedScripts, formattedInstructionsBuffer, formattedUstavki);
+    saveFunc(
+      formattedScripts,
+      formattedInstructionsBuffer,
+      formattedUstavki,
+      formattedIndications
+    );
     // saveFunc(result);
   };
 

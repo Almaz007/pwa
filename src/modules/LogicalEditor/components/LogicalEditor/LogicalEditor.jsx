@@ -44,7 +44,7 @@ function LogicalEditorContent() {
     type: ConnectionLineType.SmoothStep,
     style: { strokeWidth: 2 },
   };
-  console.log(nodes);
+
   return (
     <div className={styles["logical__editor"]}>
       <div className={styles["configuration"]}></div>

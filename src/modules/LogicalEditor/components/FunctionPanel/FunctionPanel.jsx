@@ -23,7 +23,6 @@ export const FunctionPanel = ({ saveChanges }) => {
   );
   // console.log(processorType);
   const instructionsProcessor = instructions[processorType];
-  console.log(instructionsProcessor);
   return (
     <Panel className={styles["panel"]}>
       <div className={styles["panel__row"]}>

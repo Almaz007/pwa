@@ -2,7 +2,10 @@
   position: relative;
   width: 200px;
 }
-
+.select-label {
+  display: block;
+  margin-bottom: 6px;
+}
 .select-wrapper {
   border: 1px solid #ccc;
   padding: 10px;
