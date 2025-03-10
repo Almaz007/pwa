@@ -10,7 +10,7 @@ export const TestPage = () => {
   );
   return (
     <div className={styles["test__page"]}>
-      {device ? (
+      {true ? (
         <Test />
       ) : (
         <h2 className={styles["test__page__title"]}>

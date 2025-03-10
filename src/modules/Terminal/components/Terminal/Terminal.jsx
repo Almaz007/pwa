@@ -33,18 +33,26 @@ export const Terminal = () => {
     <div className={styles["terminal"]}>
       <div className={styles["logs__block"]}>
         <div className={styles["btns"]}>
-          <AiOutlineClear
-            onClick={clearLogs}
-            className={cn(styles["button"], styles["clear"])}
-          />
-          <MdOutlineBluetoothConnected
-            onClick={() => connect()}
-            className={cn(styles["button"], styles["connect"])}
-          />
-          <MdOutlineBluetoothDisabled
-            onClick={() => disconnect()}
-            className={cn(styles["button"], styles["disconnect"])}
-          />
+          <div className={styles["btn__block"]} data-title="Очистка">
+            <AiOutlineClear
+              onClick={clearLogs}
+              className={cn(styles["button"], styles["clear"])}
+            />
+          </div>
+          <div className={styles["btn__block"]} data-title="Подключение">
+            <MdOutlineBluetoothConnected
+              onClick={() => connect()}
+              className={cn(styles["button"], styles["connect"])}
+              data-title="Подключение"
+            />
+          </div>
+          <div className={styles["btn__block"]} data-title="Отключение">
+            <MdOutlineBluetoothDisabled
+              onClick={() => disconnect()}
+              className={cn(styles["button"], styles["disconnect"])}
+              data-title="Отключение"
+            />
+          </div>
           <CustomSelect
             values={[...connectionTypes]}
             value={connectionType}

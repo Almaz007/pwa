@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { createWithEqualityFn } from "zustand/traditional";
+import { formatTimestamp } from "../../Test/helpers/helpers";
 
 export const useBleState = createWithEqualityFn((set, get) => ({
   device: null,
@@ -10,8 +11,10 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     serviceUuid: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
     sendCharacteristicUuid: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
     receiveCharacteristicUuid: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
+    timerCharacteristicUuid: "6e40004-b5a3-f393-e0a9-e50e24dcca9e",
   },
   batteryValue: "100",
+  timerValue: 0,
   options: {
     1: {
       id: 1,
@@ -30,7 +33,6 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     },
     4: { id: 4, state: 0 },
   },
-
   setOptions(id) {
     set((prev) => ({
       options: {
@@ -50,7 +52,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     set({ logs: [] });
   },
 
-  boundHandleCharacteristicValueChanged: (event) => {
+  handleBatteryValueChanged: (event) => {
     const { addLog } = get();
 
     const int32Array = new Int32Array(event.target.value.buffer); // Создаем Int32Array из ArrayBuffer
@@ -61,6 +63,19 @@ export const useBleState = createWithEqualityFn((set, get) => ({
 
     //const value = new TextDecoder().decode(event.target.value, );
     set({ batteryValue: stringValue });
+    addLog(stringValue, "in");
+  },
+  handleTimerValueChanged: (event) => {
+    const { addLog } = get();
+
+    const int32Array = new Int32Array(event.target.value.buffer); // Создаем Int32Array из ArrayBuffer
+    // Получаем значение из Int32Array
+    const value1 = int32Array[0];
+    // Преобразуем значение в строку
+    const stringValue = value1.toString();
+
+    //const value = new TextDecoder().decode(event.target.value, );
+    set({ timerValue: formatTimestamp(+stringValue) });
     addLog(stringValue, "in");
   },
   boundHandleDisconnection: () => {
@@ -102,24 +117,39 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     const receiveCharacteristic = await service.getCharacteristic(
       uuids.receiveCharacteristicUuid
     );
+    const timerCharacteristic = await service.getCharacteristic(
+      uuids.timerCharacteristicUuid
+    );
 
     addLog("Characteristics found");
-    set({ characteristics: { sendCharacteristic, receiveCharacteristic } });
+    set({
+      characteristics: {
+        sendCharacteristic,
+        receiveCharacteristic,
+        timerCharacteristic,
+      },
+    });
   },
   startNotifications: async () => {
     const {
       addLog,
-      characteristics: { receiveCharacteristic },
-      boundHandleCharacteristicValueChanged,
+      characteristics: { receiveCharacteristic, timerCharacteristic },
+      handleBatteryValueChanged,
+      handleTimerValueChanged,
     } = get();
 
     addLog("Starting notifications...");
     await receiveCharacteristic.startNotifications();
+    await timerCharacteristic.startNotifications();
     addLog("Notifications started");
 
     receiveCharacteristic.addEventListener(
       "characteristicvaluechanged",
-      boundHandleCharacteristicValueChanged
+      handleBatteryValueChanged
+    );
+    timerCharacteristic.addEventListener(
+      "characteristicvaluechanged",
+      handleTimerValueChanged
     );
   },
 

@@ -7,14 +7,16 @@ import { shallow } from "zustand/shallow";
 import { PiFan } from "react-icons/pi";
 import { LuBatteryCharging } from "react-icons/lu";
 import { PiFanFill } from "react-icons/pi";
+import { formatTimestamp } from "../../helpers/helpers";
 
 export const Test = () => {
-  const [send, options, setOptions, batteryValue] = useBleState(
+  const [send, options, setOptions, batteryValue, timerValue] = useBleState(
     (state) => [
       state.send,
       state.options,
       state.setOptions,
       state.batteryValue,
+      state.timerValue,
     ],
     shallow
   );
@@ -27,15 +29,17 @@ export const Test = () => {
         return acc;
       }, [])
       .join("");
-    console.log(message);
     send(message);
   }, [options]);
 
   return (
     <>
+      <div className={styles["time"]}>
+        <div className="timer__value">time: {timerValue}</div>
+      </div>
       <div className={styles["battery"]}>
         <LuBatteryCharging className={styles["battery__icon"]} />
-        <div className="battery__value">{batteryValue} мВТ</div>
+        <div className="battery__value">{batteryValue} mV</div>
       </div>
       <div className={styles["bulb__row"]}>
         {Object.entries(options)

@@ -17,7 +17,31 @@
   font-size: 30px;
   transition: 0.3s all;
 }
+.btn__block {
+  position: relative;
+}
+.btn__block::after {
+  content: attr(data-title);
+  position: absolute;
+  z-index: 2000;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  box-shadow: 0 5px 10px #0030e24d;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
 
+.btn__block:hover::after {
+  opacity: 1;
+}
 .connect:hover {
   color: var(--connect-icon-color);
 }
