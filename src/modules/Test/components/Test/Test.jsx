@@ -7,7 +7,6 @@ import { shallow } from "zustand/shallow";
 import { PiFan } from "react-icons/pi";
 import { LuBatteryCharging } from "react-icons/lu";
 import { PiFanFill } from "react-icons/pi";
-import { formatTimestamp } from "../../helpers/helpers";
 
 export const Test = () => {
   const [send, options, setOptions, batteryValue, timerValue] = useBleState(

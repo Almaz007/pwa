@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { createWithEqualityFn } from "zustand/traditional";
-import { formatTimestamp } from "../../Test/helpers/helpers";
+import { formatTimestamp } from "../helpers/helpers";
 
 export const useBleState = createWithEqualityFn((set, get) => ({
   device: null,
@@ -69,12 +69,9 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     const { addLog } = get();
 
     const int32Array = new Int32Array(event.target.value.buffer); // Создаем Int32Array из ArrayBuffer
-    // Получаем значение из Int32Array
     const value1 = int32Array[0];
-    // Преобразуем значение в строку
     const stringValue = value1.toString();
 
-    //const value = new TextDecoder().decode(event.target.value, );
     set({ timerValue: formatTimestamp(+stringValue) });
     addLog(stringValue, "in");
   },
