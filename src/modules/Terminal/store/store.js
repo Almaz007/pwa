@@ -11,7 +11,7 @@ export const useBleState = createWithEqualityFn((set, get) => ({
     serviceUuid: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
     sendCharacteristicUuid: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
     receiveCharacteristicUuid: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
-    timerCharacteristicUuid: "6e40004-b5a3-f393-e0a9-e50e24dcca9e",
+    timerCharacteristicUuid: "6e400004-b5a3-f393-e0a9-e50e24dcca9e",
   },
   batteryValue: "100",
   timerValue: 0,
