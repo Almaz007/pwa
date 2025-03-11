@@ -10,6 +10,7 @@ import cn from "classnames";
 import { useTermianl } from "../../hooks/useTerminal";
 import { connectionTypes } from "../../constants/constatns";
 import { CustomSelect } from "../../../../components/UI/CustomSelect/CustomSelect";
+import { SelectRow } from "../../../../components/UI/SelectRow/SelectRow";
 
 export const Terminal = () => {
   const {
@@ -60,6 +61,32 @@ export const Terminal = () => {
             label="тип соединения"
           />
         </div>
+        <SelectRow title={"Подключенные устройства"}>
+          <ul>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+          </ul>
+        </SelectRow>
+        <SelectRow title={"Новые устройства"}>
+          <ul>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+            <li>test</li>
+          </ul>
+        </SelectRow>
         <div className={styles["logs"]}>
           {logs.map((log) => (
             <LogItem key={log.id} log={log} />

@@ -1,0 +1,45 @@
+.select__row {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: 300ms ease-in-out;
+}
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  padding: 10px;
+  transition: var(--tran-03);
+  cursor: pointer;
+}
+.info:hover {
+  background-color: var(--primary-hover-color);
+  color: #fff;
+}
+
+.icon {
+  font-size: 35px;
+  transition: var(--tran-03);
+}
+.info:hover .icon {
+  color: #fff;
+}
+.icon svg {
+  display: block;
+}
+.show .icon {
+  transform: rotate(180deg);
+}
+.content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: 300ms ease-in-out;
+  padding: 10px;
+}
+
+.content.show {
+  grid-template-rows: 1fr;
+}
+.content__block {
+  overflow: hidden;
+}
