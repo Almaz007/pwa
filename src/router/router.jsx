@@ -22,6 +22,7 @@ import DeviceIndication from "../pages/deviceIndication/DeviceIndication";
 import { TestPage } from "../pages/test/Test";
 import { Ustavki } from "../modules/Ustavki/components/Ustavki/UIstavki";
 import { UstavkiPage } from "../pages/ustavki/UstavkiPage";
+import { LogicalEditorPage } from "../pages/logicalEditor/LogicalEditorPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
 
       {
         path: "flexibleLogic",
-        element: <LogicalEditorLayout />,
+        element: <LogicalEditorPage />,
         children: [
           {
             index: true,

@@ -5,13 +5,17 @@ import { formatTimestamp } from "../helpers/helpers";
 
 export const useBleState = createWithEqualityFn((set, get) => ({
   device: null,
+  devices: {},
+  currentDeviceId: null,
   characteristics: {},
   logs: [],
   uuids: {
-    serviceUuid: "6e400001-b5a3-f393-e0a9-e50e24dcca9e",
-    sendCharacteristicUuid: "6e400002-b5a3-f393-e0a9-e50e24dcca9e",
-    receiveCharacteristicUuid: "6e400003-b5a3-f393-e0a9-e50e24dcca9e",
-    timerCharacteristicUuid: "6e400004-b5a3-f393-e0a9-e50e24dcca9e",
+    "realme 11": {
+      serviceUuid: "f1d43f8b-3778-4efd-a778-1eb6f51e60ff",
+      sendCharacteristicUuid: "a4496cd5-ecf9-4d30-b75a-6835db352882",
+      batteryCharacteristicUuid: "1c364265-2a7f-4444-9b31-45748e778766",
+      timerCharacteristicUuid: "d12aec19-8587-4d3d-815e-7f14852d3d4a",
+    },
   },
   batteryValue: "100",
   timerValue: 0,
@@ -51,7 +55,9 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   clearLogs() {
     set({ logs: [] });
   },
-
+  changeDeviceById: (deviceId) => {
+    set({ currentDeviceId: deviceId });
+  },
   handleBatteryValueChanged: (event) => {
     const { addLog } = get();
 
@@ -86,61 +92,112 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   },
 
   requestBluetoothDevice: async () => {
-    const { addLog, boundHandleDisconnection, uuids } = get();
+    const { addLog, boundHandleDisconnection, devices, uuids } = get();
 
     addLog("Requesting bluetooth device...");
     const device = await navigator.bluetooth.requestDevice({
       acceptAllDevices: true,
-      optionalServices: [uuids.serviceUuid],
+      optionalServices: [uuids["realme 11"].serviceUuid],
     });
 
     addLog(`${device.name} bluetooth device selected`);
-    device.addEventListener("gattserverdisconnected", boundHandleDisconnection);
-    set({ device }); // Remember device.
+
+    if (!devices[device.id]) {
+      device.addEventListener(
+        "gattserverdisconnected",
+        boundHandleDisconnection
+      );
+
+      set({
+        devices: {
+          ...devices,
+          [device.id]: {
+            id: device.id,
+            device: device,
+            characteristics: {
+              sendCharacteristic: null,
+              batteryCharacteristic: null,
+              timerCharacteristic: null,
+            },
+          },
+        },
+      }); // Remember device.
+    }
+
+    set({
+      currentDeviceId: device.id,
+    });
   },
   connectDeviceAndCacheCharacteristic: async () => {
-    const { uuids, addLog, device } = get();
+    const { uuids, addLog, devices, currentDeviceId } = get();
+    const { device } = devices[currentDeviceId];
 
     addLog("Connecting to GATT server...");
     const server = await device.gatt.connect();
 
     addLog("GATT server connected, getting service...");
-    const service = await server.getPrimaryService(uuids.serviceUuid);
+    // const service = await server.getPrimaryService(uuids.serviceUuid);
+    const service = await server.getPrimaryService(
+      uuids[device.name].serviceUuid
+    );
 
     addLog("Service found, getting characteristic...");
-    const sendCharacteristic = await service.getCharacteristic(
-      uuids.sendCharacteristicUuid
+    const characteristics = await service.getCharacteristics();
+
+    for (const characteristic of characteristics) {
+      console.log(characteristic.getDescriptors());
+    }
+
+    const sendCharacteristicDevice = await service.getCharacteristic(
+      uuids[device.name].sendCharacteristicUuid
     );
-    const receiveCharacteristic = await service.getCharacteristic(
-      uuids.receiveCharacteristicUuid
+    const batteryCharacteristicDevice = await service.getCharacteristic(
+      uuids[device.name].batteryCharacteristicUuid
     );
-    const timerCharacteristic = await service.getCharacteristic(
-      uuids.timerCharacteristicUuid
+    const timerCharacteristicDevice = await service.getCharacteristic(
+      uuids[device.name].timerCharacteristicUuid
     );
 
     addLog("Characteristics found");
-    set({
-      characteristics: {
-        sendCharacteristic,
-        receiveCharacteristic,
-        timerCharacteristic,
-      },
-    });
+
+    const { sendCharacteristic, batteryCharacteristic, timerCharacteristic } =
+      devices[currentDeviceId].characteristics;
+
+    if (!sendCharacteristic && !batteryCharacteristic && !timerCharacteristic) {
+      set({
+        devices: {
+          ...devices,
+          [currentDeviceId]: {
+            ...devices[currentDeviceId],
+            characteristics: {
+              sendCharacteristic: sendCharacteristicDevice,
+              batteryCharacteristic: batteryCharacteristicDevice,
+              timerCharacteristic: timerCharacteristicDevice,
+            },
+          },
+        },
+      });
+    }
   },
   startNotifications: async () => {
     const {
       addLog,
-      characteristics: { receiveCharacteristic, timerCharacteristic },
+      devices,
       handleBatteryValueChanged,
       handleTimerValueChanged,
+      currentDeviceId,
     } = get();
 
     addLog("Starting notifications...");
-    await receiveCharacteristic.startNotifications();
+    const { batteryCharacteristic, timerCharacteristic } =
+      devices[currentDeviceId].characteristics;
+
+    addLog("Starting notifications...");
+    await batteryCharacteristic.startNotifications();
     await timerCharacteristic.startNotifications();
     addLog("Notifications started");
 
-    receiveCharacteristic.addEventListener(
+    batteryCharacteristic.addEventListener(
       "characteristicvaluechanged",
       handleBatteryValueChanged
     );
@@ -166,10 +223,8 @@ export const useBleState = createWithEqualityFn((set, get) => ({
       addLog(`Error: ${err.message}`, "err");
     }
   },
-  disconnectFromDevice: () => {
-    const { addLog, device, boundHandleDisconnection } = get();
-
-    if (!device) return;
+  disconnectFromDevice: (device) => {
+    const { addLog, boundHandleDisconnection } = get();
 
     device.removeEventListener(
       "gattserverdisconnected",
@@ -189,27 +244,41 @@ export const useBleState = createWithEqualityFn((set, get) => ({
   disconnect: () => {
     const {
       disconnectFromDevice,
-      characteristic,
-      boundHandleCharacteristicValueChanged,
+      devices,
+      handleBatteryValueChanged,
+      handleTimerValueChanged,
+      currentDeviceId,
     } = get();
 
-    disconnectFromDevice();
+    if (!Object.keys(devices).length && !currentDeviceId) return;
 
-    if (characteristic) {
-      characteristic.removeEventListener(
+    const deviceInfo = devices[currentDeviceId];
+    disconnectFromDevice(deviceInfo.device);
+
+    const { batteryCharacteristic, timerCharacteristic } =
+      deviceInfo.characteristics;
+
+    if (batteryCharacteristic && timerCharacteristic) {
+      batteryCharacteristic.removeEventListener(
         "characteristicvaluechanged",
-        boundHandleCharacteristicValueChanged
+        handleBatteryValueChanged
+      );
+      timerCharacteristic.removeEventListener(
+        "characteristicvaluechanged",
+        handleTimerValueChanged
       );
     }
 
-    set({ device: null, characteristic: null });
+    const newDevices = { ...devices };
+    delete newDevices[currentDeviceId];
+
+    const newCurrentDeviceId = Object.values(devices)[0]
+      ? null
+      : Object.values(devices)[0].id;
+    set({ devices: newDevices, currentDeviceId: newCurrentDeviceId });
   },
   send: (text) => {
-    const {
-      characteristics: { sendCharacteristic },
-      device,
-      addLog,
-    } = get();
+    const { devices, currentDeviceId, addLog } = get();
     try {
       text = String(text || "");
 
@@ -218,33 +287,29 @@ export const useBleState = createWithEqualityFn((set, get) => ({
         throw new Error("нельзя отправить пустые данные");
       }
 
-      if (!device || !sendCharacteristic) {
-        throw new Error("необходимо подключиться к устройству");
+      if (!currentDeviceId) {
+        throw new Error("Устройство должно быть выбрано");
       }
 
+      const { sendCharacteristic } = devices[currentDeviceId].characteristics;
       sendCharacteristic.writeValue(new TextEncoder().encode(text));
-
       addLog(text, "out");
     } catch (err) {
       addLog(`Error: ${err.message}`, "err");
     }
   },
   sendGL: (arrUint8) => {
-    const {
-      characteristics: { sendCharacteristic },
-      device,
-      addLog,
-    } = get();
+    const { devices, currentDeviceId, addLog } = get();
     try {
       // Return rejected promise immediately if data is empty.
       if (!arrUint8.length) {
         throw new Error("нельзя отправить пустые данные");
       }
 
-      if (!device || !sendCharacteristic) {
-        throw new Error("необходимо подключиться к устройству");
+      if (!currentDeviceId) {
+        throw new Error("Устройство должно быть выбрано");
       }
-
+      const { sendCharacteristic } = devices[currentDeviceId].characteristics;
       sendCharacteristic.writeValue(arrUint8);
 
       // addLog(text, "out");

@@ -51,3 +51,10 @@
 .clear:hover {
   color: var(--clear-icon-color);
 }
+.device {
+  padding: 5px;
+  cursor: pointer;
+}
+.device.selected {
+  background-color: rgb(150, 190, 255);
+}

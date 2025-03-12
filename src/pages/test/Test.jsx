@@ -4,13 +4,13 @@ import styles from "./TestPage.module.css";
 import { shallow } from "zustand/shallow";
 
 export const TestPage = () => {
-  const { device } = useBleState(
-    (store) => ({ device: store.device }),
+  const { currentDeviceId } = useBleState(
+    (store) => ({ device: store.currentDeviceId }),
     shallow
   );
   return (
     <div className={styles["test__page"]}>
-      {true ? (
+      {currentDeviceId ? (
         <Test />
       ) : (
         <h2 className={styles["test__page__title"]}>

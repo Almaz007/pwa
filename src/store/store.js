@@ -53,7 +53,6 @@ export const useMenu = create((set, get) => ({
       }
     }
   },
-
   backToHistoryChoices: async () => {
     const { historyChoices } = get();
     console.log(historyChoices);

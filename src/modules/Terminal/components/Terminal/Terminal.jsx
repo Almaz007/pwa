@@ -11,25 +11,31 @@ import { useTermianl } from "../../hooks/useTerminal";
 import { connectionTypes } from "../../constants/constatns";
 import { CustomSelect } from "../../../../components/UI/CustomSelect/CustomSelect";
 import { SelectRow } from "../../../../components/UI/SelectRow/SelectRow";
+import { useBleState } from "../../store/store";
+import { useState } from "react";
 
 export const Terminal = () => {
-  const {
-    connectionType,
-    setConnectionType,
-    text,
-    setText,
-    logs,
-    clearLogs,
-    send,
-    connect,
-    disconnect,
-  } = useTermianl();
+  const [text, setText] = useState("");
+  const [devices, connect, disconnect, logs, clearLogs, send, currentDeviceId] =
+    useBleState((state) => [
+      state.devices,
+      state.connect,
+      state.disconnect,
+      state.logs,
+      state.clearLogs,
+      state.send,
+      state.currentDeviceId,
+      state.changeDeviceById,
+    ]);
 
   const handleClick = () => {
     setText("");
     send(text);
   };
-
+  const deviceClick = (id) => {
+    if (currentDeviceId === id) return;
+    changeDeviceById(id);
+  };
   return (
     <div className={styles["terminal"]}>
       <div className={styles["logs__block"]}>
@@ -54,39 +60,36 @@ export const Terminal = () => {
               data-title="Отключение"
             />
           </div>
-          <CustomSelect
+          {/* <CustomSelect
             values={[...connectionTypes]}
             value={connectionType}
             handleChange={(event) => setConnectionType(event.target.value)}
             label="тип соединения"
-          />
+          /> */}
         </div>
         <SelectRow title={"Подключенные устройства"}>
-          <ul>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-          </ul>
+          {Object.keys(devices).length ? (
+            Object.values(devices).map(({ device }) => {
+              return (
+                <div
+                  key={device.id}
+                  className={cn(styles["device"], {
+                    [styles["selected"]]: device.id === currentDeviceId,
+                  })}
+                  onClick={() => deviceClick(device.id)}
+                >
+                  <div className={cn(styles["name"])}>{device.name}</div>
+                  {/* <button className={styles["disconnect__btn"]}>
+                    отключить
+                  </button> */}
+                </div>
+              );
+            })
+          ) : (
+            <p>Нету выбранных устройств</p>
+          )}
         </SelectRow>
-        <SelectRow title={"Новые устройства"}>
-          <ul>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-            <li>test</li>
-          </ul>
-        </SelectRow>
+
         <div className={styles["logs"]}>
           {logs.map((log) => (
             <LogItem key={log.id} log={log} />
